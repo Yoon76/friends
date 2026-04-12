@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Crew</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Bebas+Neue&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #08080a;
+      color: #f0f0f0;
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 5rem;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 60%, #1a1000 0%, transparent 55%),
+        radial-gradient(ellipse at 70% 40%, #0a001a 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 30%, #1a0a08 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: #383838;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 15rem);
+      line-height: 0.88;
+      letter-spacing: 0.03em;
+      color: #fff;
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.85rem, 2vw, 1.05rem);
+      color: #383838;
+      margin-top: 1.75rem;
+      letter-spacing: 0.25em;
+      font-weight: 300;
+      position: relative;
+    }
+
+    .scroll-hint {
+      margin-top: 3.5rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #222;
+      animation: pulse 2.5s ease-in-out infinite;
+      position: relative;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.9} }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #1a1a1a, transparent);
+      max-width: 1100px;
+      margin: 0 auto 0;
+    }
+
+    /* ── CREW GRID ── */
+    .crew-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5px;
+      background: #111;
+      border-left: 1px solid #111;
+      border-right: 1px solid #111;
+      max-width: 1100px;
+      margin: 0 auto 0;
+    }
+
+    .crew-card {
+      background: #08080a;
+      padding: 3rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      text-decoration: none;
+      color: inherit;
+      border-top: 2px solid transparent;
+      transition: background 0.2s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .crew-card:hover { background: #0d0d0f; }
+
+    .card-num {
+      font-size: 0.6rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #2a2a2a;
+    }
+
+    .card-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 7vw, 5.5rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+    }
+
+    .card-tagline {
+      font-size: 0.82rem;
+      color: #444;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      flex: 1;
+    }
+
+    .card-cta {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #2a2a2a;
+      transition: color 0.2s;
+      margin-top: 0.5rem;
+    }
+
+    .crew-card:hover .card-cta { color: #666; }
+
+    /* Per-friend accent colors */
+    .card-amr   { border-top-color: #c8a05a; }
+    .card-amr   .card-name { color: #c8a05a; }
+    .card-amr:hover { box-shadow: inset 0 0 80px rgba(200,160,90,0.04); }
+
+    .card-ayaron { border-top-color: #c9a84c; }
+    .card-ayaron .card-name { color: #c9a84c; }
+    .card-ayaron:hover { box-shadow: inset 0 0 80px rgba(201,168,76,0.04); }
+
+    .card-jasper { border-top-color: #e05c00; }
+    .card-jasper .card-name { color: #e05c00; }
+    .card-jasper:hover { box-shadow: inset 0 0 80px rgba(224,92,0,0.05); }
+
+    .card-max   { border-top-color: #c9965a; }
+    .card-max   .card-name { color: #c9965a; }
+    .card-max:hover { box-shadow: inset 0 0 80px rgba(201,150,90,0.04); }
+
+    .card-sagan { border-top-color: #c0392b; }
+    .card-sagan .card-name { color: #c0392b; }
+    .card-sagan:hover { box-shadow: inset 0 0 80px rgba(192,57,43,0.05); }
+
+    .card-tbone { border-top-color: #c8102e; }
+    .card-tbone .card-name { color: #c8102e; }
+    .card-tbone:hover { box-shadow: inset 0 0 80px rgba(200,16,46,0.05); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 5rem 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      border-top: 1px solid #111;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">
+    <p class="hero-eyebrow">Oxford, MS &nbsp;·&nbsp; Friend Group Official Archive</p>
+    <h1>The Crew</h1>
+    <p class="hero-sub">Six people. Zero chill. Complete documentation.</p>
+    <p class="scroll-hint">↓ select your victim</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="crew-grid">
+
+    <a href="amr/" class="crew-card card-amr">
+      <p class="card-num">01 &nbsp;—&nbsp; The Egyptian</p>
+      <p class="card-name">Amr</p>
+      <p class="card-tagline">Nonchalant · Shelby's regular · Zero stress detected. Ever.</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="ayaron/" class="crew-card card-ayaron">
+      <p class="card-num">02 &nbsp;—&nbsp; The One</p>
+      <p class="card-name">AyAron</p>
+      <p class="card-tagline">6'2 · Unbothered · Inevitable. Sagan never stood a chance.</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="jasper/" class="crew-card card-jasper">
+      <p class="card-num">03 &nbsp;—&nbsp; The Ragebait Chronicles</p>
+      <p class="card-name">Jasper</p>
+      <p class="card-tagline">5'1 · Claims 5'5 · Professional ragebaiter. Zero believers.</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="max/" class="crew-card card-max">
+      <p class="card-num">04 &nbsp;—&nbsp; Teddy Bear. Occasionally Brain-Dead.</p>
+      <p class="card-name">Max</p>
+      <p class="card-tagline">Milililililililinovich · Smart · Self-reported the incident. Voluntarily.</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="sagan/" class="crew-card card-sagan">
+      <p class="card-num">05 &nbsp;—&nbsp; A Tragedy</p>
+      <p class="card-name">Sagan</p>
+      <p class="card-tagline">Mogged daily · Huzzless · A real one though (we're being nice).</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="t-bone/" class="crew-card card-tbone">
+      <p class="card-num">06 &nbsp;—&nbsp; AP Bio's Biggest Mistake</p>
+      <p class="card-name">T-Bone</p>
+      <p class="card-tagline">5'1 · Class clown · Reds & Raiders fan. Mrs. Jones is tired.</p>
+      <p class="card-cta">View Profile →</p>
+    </a>
+
+  </div>
+
+  <footer>
+    Official Archive &nbsp;·&nbsp; All profiles 100% accurate &nbsp;·&nbsp; No fact-checking was harmed
+  </footer>
+
+</body>
+</html>

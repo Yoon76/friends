@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sagan — A Tragedy</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --red: #c0392b;
+      --dim: #1a1a1a;
+      --muted: #555;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #888; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: #c0392b !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at 50% 40%, #1a0808 0%, #0a0a0a 70%);
+      position: relative;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1rem;
+      opacity: 0.8;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 14rem);
+      line-height: 0.9;
+      color: #2a2a2a;
+      text-shadow: 2px 2px 0 #111;
+      position: relative;
+    }
+
+    .strikethrough {
+      position: relative;
+      display: inline-block;
+    }
+
+    .strikethrough::after {
+      content: '';
+      position: absolute;
+      left: -2%;
+      top: 50%;
+      width: 104%;
+      height: 6px;
+      background: var(--red);
+      transform: rotate(-3deg);
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.2rem);
+      font-weight: 300;
+      color: #555;
+      margin-top: 2rem;
+      letter-spacing: 0.15em;
+      font-style: italic;
+    }
+
+    .sad-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #333;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.7} }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #666;
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+      opacity: 0.2;
+    }
+
+    /* ── L GRID ── */
+    .l-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      background: #111;
+      border: 1px solid #111;
+    }
+
+    .l-card {
+      background: var(--black);
+      padding: 2rem;
+    }
+
+    .l-icon { font-size: 2rem; margin-bottom: 0.75rem; filter: grayscale(1); opacity: 0.5; }
+
+    .l-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--red);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .l-card p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+
+    /* ── TESTIMONY ── */
+    .testimony {
+      background: #0d0808;
+      border-top: 1px solid #1a0a0a;
+      border-bottom: 1px solid #1a0a0a;
+      padding: 6rem 2rem;
+    }
+
+    .testimony-inner { max-width: 900px; margin: 0 auto; }
+
+    .quote-block {
+      margin: 2rem 0;
+      padding: 2rem 2.5rem;
+      border-left: 3px solid #2a0a0a;
+      background: #0a0a0a;
+    }
+
+    .quote-text {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-attr {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      opacity: 0.6;
+    }
+
+    /* ── MOGGERS ── */
+    .mog-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+
+    .mog-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #444;
+      border-bottom: 1px solid #1a1a1a;
+    }
+
+    .mog-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid #111;
+      color: #555;
+    }
+
+    .mog-table td:first-child { color: #888; font-weight: 500; }
+
+    .mog-badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: #1a0808;
+      color: var(--red);
+      border: 1px solid #2a0a0a;
+    }
+
+    /* ── RATINGS ── */
+    .rating-bar { margin: 1rem 0; }
+
+    .rating-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-label span { color: var(--red); }
+
+    .bar-bg {
+      height: 4px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #2a0808, var(--red));
+      border-radius: 2px;
+    }
+
+    /* ── MEMORIAL ── */
+    .memorial {
+      text-align: center;
+      padding: 6rem 2rem;
+      background: #080808;
+      border-top: 1px solid #111;
+    }
+
+    .rip {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(4rem, 12vw, 9rem);
+      color: #1a1a1a;
+      letter-spacing: 0.3em;
+      margin-bottom: 1rem;
+    }
+
+    .memorial p {
+      max-width: 500px;
+      margin: 0 auto;
+      color: #333;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #222;
+      border-top: 1px solid #0f0f0f;
+    }
+
+    footer span { color: var(--red); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/" class="nav-current">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-label">A cautionary tale</p>
+    <h1><span class="strikethrough">Sagan</span></h1>
+    <p class="hero-sub">short &nbsp;·&nbsp; mogged daily &nbsp;·&nbsp; huzzless &nbsp;·&nbsp; a real one though (we're being nice)</p>
+
+    <div class="sad-stats">
+      <div class="stat">
+        <div class="stat-num">5'?</div>
+        <div class="stat-label">Height (generous)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Huzz secured</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Times mogged</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">AyAron</div>
+        <div class="stat-label">Who's better</div>
+      </div>
+    </div>
+
+    <p class="scroll-hint">↓ the documentary</p>
+  </div>
+
+  <!-- WHO IS HE -->
+  <section>
+    <p class="section-tag">01 — The subject</p>
+    <h2>Who Even<br>Is Sagan</h2>
+    <p>
+      Sagan is a guy. He exists. He shows up. He tries — bless his heart — he really does try.
+      Indian by heritage, horizontally challenged by nature, perpetually outclassed by circumstance.
+      Every room he walks into, someone taller, cooler, and more nonchalant has already arrived.
+      That person is usually AyAron. Sometimes it's a coat rack. Either way, Sagan is losing.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- L CARDS -->
+  <section style="padding-top:5rem;padding-bottom:0">
+    <p class="section-tag">02 — The evidence</p>
+    <h2>A Catalogue<br>Of L's</h2>
+  </section>
+
+  <div style="max-width:900px;margin:3rem auto 0;padding:0 2rem 6rem">
+    <div class="l-grid">
+      <div class="l-card">
+        <div class="l-icon">📉</div>
+        <h3>The Height</h3>
+        <p>Standing next to AyAron is basically a before-and-after ad. Nobody asked for this but here we are every single day.</p>
+      </div>
+      <div class="l-card">
+        <div class="l-icon">🏜️</div>
+        <h3>The Drought</h3>
+        <p>Meteorologists are studying Sagan's love life as a case study in arid conditions. Not a drop of huzz in sight.</p>
+      </div>
+      <div class="l-card">
+        <div class="l-icon">😤</div>
+        <h3>The Effort</h3>
+        <p>Sagan visibly tries. That's the problem. You can see it on his face. Meanwhile AyAron breathes and wins.</p>
+      </div>
+      <div class="l-card">
+        <div class="l-icon">👻</div>
+        <h3>The Presence</h3>
+        <p>Walks into a room. Nobody notices. Walks out of a room. Nobody notices. A true ghost among men.</p>
+      </div>
+      <div class="l-card">
+        <div class="l-icon">🪞</div>
+        <h3>The Mirror Test</h3>
+        <p>Reportedly checks his fit for 25 minutes before leaving the house. Results: still mogged by AyAron in a hoodie.</p>
+      </div>
+      <div class="l-card">
+        <div class="l-icon">📊</div>
+        <h3>The Stats</h3>
+        <p>Every metric you could track — height, rizz, huzz, aura — Sagan is below the median. The data is undefeated.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONY -->
+  <div class="testimony">
+    <div class="testimony-inner">
+      <p class="section-tag">03 — Witness accounts</p>
+      <h2>People<br>Who've Seen It</h2>
+
+      <div class="quote-block">
+        <p class="quote-text">"I've known Sagan for three years and I genuinely cannot remember a single time it worked out for him."</p>
+        <p class="quote-attr">— Unnamed associate</p>
+      </div>
+
+      <div class="quote-block">
+        <p class="quote-text">"He was standing right next to AyAron and I literally did not see him. I'm not being mean. I just didn't."</p>
+        <p class="quote-attr">— Eyewitness, location redacted</p>
+      </div>
+
+      <div class="quote-block">
+        <p class="quote-text">"Sagan texted me 'how do I get more rizz' and I didn't know what to say so I sent him this website."</p>
+        <p class="quote-attr">— Mutual friend</p>
+      </div>
+
+      <div class="quote-block">
+        <p class="quote-text">"I feel bad. But also... I mean... look at the numbers."</p>
+        <p class="quote-attr">— Everyone</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHO MOGS HIM -->
+  <section>
+    <p class="section-tag">04 — The mog list</p>
+    <h2>Things That<br>Mog Sagan</h2>
+
+    <table class="mog-table">
+      <thead>
+        <tr>
+          <th>Entity</th>
+          <th>How</th>
+          <th>Severity</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>AyAron</td>
+          <td>Height, aura, nonchalance, huzz, breathing</td>
+          <td><span class="mog-badge">Catastrophic</span></td>
+        </tr>
+        <tr>
+          <td>A well-dressed coat rack</td>
+          <td>Taller, better posture, more presence</td>
+          <td><span class="mog-badge">Severe</span></td>
+        </tr>
+        <tr>
+          <td>Average Tuesday</td>
+          <td>Arrives without effort, still wins</td>
+          <td><span class="mog-badge">Moderate</span></td>
+        </tr>
+        <tr>
+          <td>AyAron in a hoodie</td>
+          <td>Even underdressed AyAron is undeniable</td>
+          <td><span class="mog-badge">Severe</span></td>
+        </tr>
+        <tr>
+          <td>The concept of height</td>
+          <td>Philosophically opposed to Sagan's existence</td>
+          <td><span class="mog-badge">Existential</span></td>
+        </tr>
+        <tr>
+          <td>Sagan's own shadow</td>
+          <td>At least it shows up reliably</td>
+          <td><span class="mog-badge">Mild</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- RATINGS -->
+  <section>
+    <p class="section-tag">05 — The scorecard</p>
+    <h2>Sagan<br>By The Numbers</h2>
+
+    <div style="margin-top:2rem;max-width:500px">
+      <div class="rating-bar">
+        <div class="rating-label">Height <span>12</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:12%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Rizz <span>8</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:8%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Huzz secured <span>2</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:2%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Aura <span>15</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:15%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Better than AyAron <span>0</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MEMORIAL -->
+  <div class="memorial">
+    <div class="rip">R.I.P.</div>
+    <p>
+      To Sagan's huzz — gone before it ever arrived.<br><br>
+      We light a candle for the matches that never lit,
+      the texts left on read, and the moments AyAron walked in
+      and changed the temperature of the room.
+      You never stood a chance, king.
+      But you showed up. That counts for something. (It doesn't, but we're being nice.)
+    </p>
+  </div>
+
+  <footer>
+    <p>This website was made with <span>zero sympathy</span> and some mild affection.</p>
+    <p style="margin-top:0.5rem;color:#1a1a1a">Sagan — a solid 6. Keep your head up lil bro.</p>
+  </footer>
+
+</body>
+</html>

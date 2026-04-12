@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jasper — The Ragebait Chronicles</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+    :root {
+      --black: #080810;
+      --white: #f0f0ff;
+      --orange: #e05c00;
+      --orange-dim: #7a3300;
+      --dim: #111118;
+      --muted: #444;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #888; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: #e05c00 !important; }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--orange);
+      padding: 0.5rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 18s linear infinite;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at 50% 40%, #140a00 0%, #080810 70%);
+      position: relative;
+    }
+
+    .alert-banner {
+      background: #1a0e00;
+      border: 1px solid var(--orange-dim);
+      color: var(--orange);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.5rem;
+      margin-bottom: 2rem;
+      animation: blink-border 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink-border {
+      0%,100% { border-color: var(--orange-dim); }
+      50% { border-color: var(--orange); }
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 14rem);
+      line-height: 0.9;
+      color: var(--orange);
+      text-shadow: 0 0 80px rgba(224,92,0,0.3);
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      font-weight: 300;
+      color: #664422;
+      margin-top: 1.5rem;
+      letter-spacing: 0.15em;
+      font-style: italic;
+    }
+
+    .rage-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--orange);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #443322;
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #333;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.8} }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--orange);
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      color: #ccaa88;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #665544;
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0.2;
+    }
+
+    /* ── HEIGHT CONFESSION ── */
+    .height-box {
+      background: var(--dim);
+      border: 1px solid #2a1500;
+      padding: 3rem;
+      margin-top: 2rem;
+      position: relative;
+    }
+
+    .height-box::before {
+      content: 'EVIDENCE';
+      position: absolute;
+      top: -1px;
+      left: 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      background: var(--orange);
+      color: #000;
+      padding: 0.2rem 0.6rem;
+      font-weight: 700;
+    }
+
+    .height-compare {
+      display: flex;
+      align-items: flex-end;
+      gap: 3rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .height-bar-wrap { text-align: center; }
+
+    .height-bar {
+      width: 60px;
+      background: var(--orange);
+      margin: 0 auto 0.5rem;
+      border-radius: 3px 3px 0 0;
+      position: relative;
+    }
+
+    .height-bar.claimed { background: #3a1a00; border: 1px dashed var(--orange-dim); }
+
+    .height-bar-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--orange);
+    }
+
+    .height-bar-sub {
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #443322;
+      margin-top: 0.2rem;
+    }
+
+    .height-bar.claimed .height-bar-label { color: #3a2010; }
+
+    /* ── RAGELOG ── */
+    .ragelog {
+      background: #0a0808;
+      border-top: 1px solid #1a0800;
+      border-bottom: 1px solid #1a0800;
+      padding: 6rem 2rem;
+    }
+
+    .ragelog-inner { max-width: 900px; margin: 0 auto; }
+
+    .log-entry {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 0;
+      border-bottom: 1px solid #111118;
+      align-items: start;
+    }
+
+    .log-time {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--orange);
+      opacity: 0.5;
+      line-height: 1.3;
+    }
+
+    .log-time span {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #333;
+    }
+
+    .log-text {
+      font-size: 0.95rem;
+      color: #664433;
+      line-height: 1.7;
+    }
+
+    .log-tag {
+      display: inline-block;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      background: #1a0800;
+      color: var(--orange);
+      border: 1px solid #2a1000;
+      padding: 0.15rem 0.5rem;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    /* ── TRAIT CARDS ── */
+    .trait-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      background: #111118;
+      border: 1px solid #111118;
+    }
+
+    .trait-card {
+      background: var(--black);
+      padding: 2rem;
+    }
+
+    .trait-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .trait-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--orange);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .trait-card p {
+      font-size: 0.9rem;
+      color: #554433;
+    }
+
+    /* ── RATINGS ── */
+    .rating-bar { margin: 1rem 0; }
+
+    .rating-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #443322;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-label span { color: var(--orange); }
+
+    .bar-bg {
+      height: 4px;
+      background: #111118;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3a1500, var(--orange));
+      border-radius: 2px;
+    }
+
+    /* ── QUOTES ── */
+    .quote-block {
+      margin: 2rem 0;
+      padding: 2rem 2.5rem;
+      border-left: 3px solid #2a1000;
+      background: var(--dim);
+    }
+
+    .quote-text {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #665544;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-attr {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--orange);
+      opacity: 0.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #222228;
+      border-top: 1px solid #111118;
+    }
+
+    footer span { color: var(--orange); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/" class="nav-current">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <span class="ticker-inner">
+      &nbsp;&nbsp;&nbsp;⚠ RAGEBAIT DETECTED &nbsp;·&nbsp; HEIGHT FRAUD ALERT &nbsp;·&nbsp; NOT 5'5 &nbsp;·&nbsp; REPEAT: NOT 5'5 &nbsp;·&nbsp; JASPER SAYS SOMETHING UNHINGED AGAIN &nbsp;·&nbsp; NOBODY BELIEVES HIM &nbsp;·&nbsp; RAGEBAIT DETECTED &nbsp;·&nbsp; HEIGHT FRAUD ALERT &nbsp;·&nbsp;
+    </span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="alert-banner">⚠ &nbsp; Ragebait warning — you have been warned &nbsp; ⚠</div>
+    <h1>Jasper</h1>
+    <p class="hero-sub">5'1 &nbsp;·&nbsp; "claims 5'5" &nbsp;·&nbsp; professional ragebaiter &nbsp;·&nbsp; nobody's fooled</p>
+
+    <div class="rage-stats">
+      <div class="stat">
+        <div class="stat-num">5'1"</div>
+        <div class="stat-label">Actual height</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5'5"</div>
+        <div class="stat-label">What he tells people</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">People who believe him</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Rageposts per day</div>
+      </div>
+    </div>
+
+    <p class="scroll-hint">↓ the full report</p>
+  </div>
+
+  <!-- WHO IS HE -->
+  <section>
+    <p class="section-tag">01 — The subject</p>
+    <h2>Who Is<br>Jasper</h2>
+    <p>
+      Jasper is a 5'1 man who woke up one day and decided that the world needed to be
+      provoked, constantly, for no reason. He posts things specifically designed to make
+      people angry. He says things in person specifically designed to make people argue.
+      And then, when it works, he acts surprised. He also insists he is 5'5.
+      He is not 5'5. Nobody thinks he is 5'5. A tape measure has been offered multiple times.
+      He has declined every time.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- HEIGHT FRAUD -->
+  <section>
+    <p class="section-tag">02 — The height conspiracy</p>
+    <h2>5'1 Claiming<br>5'5</h2>
+    <p>Let the record show the following measurements, verified by everyone in the room except Jasper.</p>
+
+    <div class="height-box">
+      <div class="height-compare">
+        <div class="height-bar-wrap">
+          <div class="height-bar" style="height:100px;"></div>
+          <div class="height-bar-label">5'1"</div>
+          <div class="height-bar-sub">Actual</div>
+        </div>
+        <div class="height-bar-wrap">
+          <div class="height-bar claimed" style="height:148px;"></div>
+          <div class="height-bar-label" style="color:#3a2010">5'5"</div>
+          <div class="height-bar-sub">His claim (fictional)</div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <p style="font-size:0.9rem;color:#554433;line-height:1.7">
+            That's a 4-inch discrepancy. Four inches. That's not a rounding error.
+            That's not "I was wearing thick soles." That is a lifestyle choice — a commitment
+            to a reality that does not exist. Jasper has been living in this fictional 5'5 universe
+            for so long he may actually believe it. He does not. He knows. We all know. He knows we know.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRAIT CARDS -->
+  <section style="padding-top:5rem;padding-bottom:0">
+    <p class="section-tag">03 — Defining characteristics</p>
+    <h2>A Portrait<br>Of Chaos</h2>
+  </section>
+
+  <div style="max-width:900px;margin:3rem auto 0;padding:0 2rem 6rem">
+    <div class="trait-grid">
+      <div class="trait-card">
+        <div class="trait-icon">🔥</div>
+        <h3>Born To Ragebait</h3>
+        <p>Doesn't say something to communicate. Says something to provoke. Every sentence is a grenade with the pin already pulled.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">📏</div>
+        <h3>The 4-Inch Lie</h3>
+        <p>Claiming 5'5 when the tape says 5'1. Bold. Audacious. Completely unhinged. You have to respect the commitment even if you can't respect the measurement.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">😇</div>
+        <h3>"I'm Just Saying"</h3>
+        <p>His go-to phrase after dropping an absolutely deranged take. As if "just saying" retroactively makes it reasonable. It does not.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">📱</div>
+        <h3>Chronically Online</h3>
+        <p>Absorbed too much internet. Has opinions on things nobody asked about. Will tell you them anyway. Unprompted. At length.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🪤</div>
+        <h3>The Setup</h3>
+        <p>Asks you an innocent question. You answer. Suddenly you're in an argument you didn't sign up for. Classic Jasper maneuver.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🤌</div>
+        <h3>Doubles Down</h3>
+        <p>Never backs down. Not when proven wrong. Not when shown evidence. Not when literally everyone disagrees. Especially not then.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- RAGELOG -->
+  <div class="ragelog">
+    <div class="ragelog-inner">
+      <p class="section-tag">04 — Incident log</p>
+      <h2>Documented<br>Ragebait Events</h2>
+
+      <div class="log-entry">
+        <div class="log-time">9:14 AM <span>Monday</span></div>
+        <div class="log-text">
+          <span class="log-tag">Unprompted</span>
+          <span class="log-tag">Unhinged</span>
+          <br>Jasper opens with "actually I think [controversial opinion nobody asked for]." Day ruined before 9:30.
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-time">12:03 PM <span>Tuesday</span></div>
+        <div class="log-text">
+          <span class="log-tag">Height fraud</span>
+          <br>Someone mentions they're 5'5. Jasper says "same." Room goes quiet. Nobody says anything. He knows.
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-time">3:47 PM <span>Wednesday</span></div>
+        <div class="log-text">
+          <span class="log-tag">Classic setup</span>
+          <span class="log-tag">Trap sprung</span>
+          <br>Asked a seemingly normal question. It was not a normal question. Three people are now arguing. Jasper is smiling.
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-time">7:22 PM <span>Thursday</span></div>
+        <div class="log-text">
+          <span class="log-tag">Online incident</span>
+          <br>Posted a take so specifically designed to annoy people that it almost loops back around to being impressive. Almost.
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-time">11:58 PM <span>Friday</span></div>
+        <div class="log-text">
+          <span class="log-tag">Late night chaos</span>
+          <span class="log-tag">No context</span>
+          <br>Sends a single message to the group chat. No follow-up. No explanation. Just chaos, then silence. Everyone is awake now.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WITNESSES -->
+  <section>
+    <p class="section-tag">05 — Witness accounts</p>
+    <h2>People Who've<br>Experienced Jasper</h2>
+
+    <div class="quote-block">
+      <p class="quote-text">"He said something and I genuinely couldn't tell if he believed it or if he just wanted to see what would happen. Looking back — he just wanted to see what would happen."</p>
+      <p class="quote-attr">— Survivor, incident unknown</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"He stood next to someone who is actually 5'5 and did not acknowledge it. Incredible composure. Wrong, but incredible."</p>
+      <p class="quote-attr">— Eyewitness, height fraud incident</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"Every time I think he can't say something more provocative, he says something more provocative. It's almost a talent."</p>
+      <p class="quote-attr">— Person who should've known better</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"I asked him once to just say something normal. He thought about it for a long time and then said something insane."</p>
+      <p class="quote-attr">— Mutual friend, exhausted</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- RATINGS -->
+  <section>
+    <p class="section-tag">06 — The scorecard</p>
+    <h2>Jasper<br>By The Numbers</h2>
+
+    <div style="margin-top:2rem;max-width:500px">
+      <div class="rating-bar">
+        <div class="rating-label">Actual height <span>5'1</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:18%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Claimed height <span>"5'5"</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%;opacity:0.2;border:1px dashed #e05c00"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Ragebait output <span>99</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:99%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">People who believe he's 5'5 <span>0</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Willingness to calm down <span>3</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:3%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Chaos generated per day <span>97</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:97%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>This website was made with <span>great personal frustration</span> and mild affection.</p>
+    <p style="margin-top:0.5rem;color:#1a1a22">Jasper — a 5'1 menace. We would not change him. (We would change the height fraud.)</p>
+  </footer>
+
+</body>
+</html>

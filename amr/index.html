@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amr — The Egyptian</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+    :root {
+      --black: #08080a;
+      --white: #f5f2e8;
+      --sand: #c8a05a;
+      --sand-dim: #7a5f30;
+      --deep: #1a1408;
+      --muted: #5a4a2a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── SITE NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.15s; }
+    .site-nav a:hover { color: #aaa; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: var(--sand) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background:
+        radial-gradient(ellipse at 30% 70%, #1a0e00 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 30%, #0d1a08 0%, transparent 60%),
+        radial-gradient(ellipse at 50% 50%, #150f00 0%, #08080a 70%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cpath fill='%23c8a05a' fill-opacity='0.025' d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .hero-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--sand);
+      margin-bottom: 1.5rem;
+      opacity: 0.7;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 20vw, 16rem);
+      line-height: 0.9;
+      background: linear-gradient(135deg, #f5f2e8 0%, var(--sand) 40%, #e8d4a0 70%, #f5f2e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.2rem);
+      font-weight: 300;
+      color: var(--sand-dim);
+      margin-top: 1.5rem;
+      letter-spacing: 0.2em;
+      font-style: italic;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      color: var(--sand);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      color: #332a18;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.8} }
+
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--sand);
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      color: var(--white);
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #998060;
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--sand), transparent);
+      opacity: 0.2;
+    }
+
+    .trait-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      background: #1a1408;
+      border: 1px solid #1a1408;
+    }
+
+    .trait-card {
+      background: var(--black);
+      padding: 2rem;
+    }
+
+    .trait-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .trait-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--sand);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .trait-card p {
+      font-size: 0.9rem;
+      color: #665540;
+    }
+
+    .shawarma-section {
+      background: var(--deep);
+      border-top: 1px solid #1a1408;
+      border-bottom: 1px solid #1a1408;
+      padding: 6rem 2rem;
+    }
+
+    .shawarma-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .shawarma-card {
+      background: #0d0a04;
+      border: 1px solid #2a1e08;
+      padding: 3rem;
+      margin-top: 2rem;
+      position: relative;
+    }
+
+    .shawarma-card::before {
+      content: 'SHELBY\'S';
+      position: absolute;
+      top: -1px;
+      right: 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      background: var(--sand);
+      color: #000;
+      padding: 0.25rem 0.8rem;
+      font-weight: 700;
+    }
+
+    .shawarma-card p {
+      color: #886644;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .order-list {
+      list-style: none;
+      margin-top: 2rem;
+    }
+
+    .order-list li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 0;
+      border-bottom: 1px solid #1a1408;
+      font-size: 0.9rem;
+    }
+
+    .order-list li:last-child { border-bottom: none; }
+
+    .item-name { color: #aa8855; }
+    .item-freq {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      color: var(--sand);
+      letter-spacing: 0.05em;
+    }
+
+    .quote-block {
+      margin: 2rem 0;
+      padding: 2rem 2.5rem;
+      border-left: 3px solid #2a1e08;
+      background: #0d0a04;
+    }
+
+    .quote-text {
+      font-size: 1.25rem;
+      font-style: italic;
+      color: #887755;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-attr {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--sand);
+      opacity: 0.5;
+    }
+
+    .rating-bar { margin: 1rem 0; }
+
+    .rating-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #554433;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-label span { color: var(--sand); }
+
+    .bar-bg {
+      height: 4px;
+      background: #1a1408;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--sand-dim), var(--sand));
+      border-radius: 2px;
+    }
+
+    .egypt-strip {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      height: 8px;
+    }
+
+    .egypt-strip div { flex: 1; }
+
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #2a2018;
+      border-top: 1px solid #111108;
+    }
+
+    footer span { color: var(--sand); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/" class="nav-current">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+    </div>
+  </nav>
+
+  <div class="egypt-strip">
+    <div style="background:#c8102e"></div>
+    <div style="background:#ffffff10"></div>
+    <div style="background:#000000"></div>
+  </div>
+
+  <div class="hero">
+    <p class="hero-label">Cairo certified &nbsp;·&nbsp; Shelby's regular</p>
+    <h1>Amr</h1>
+    <p class="hero-sub">Egyptian &nbsp;·&nbsp; Nonchalant &nbsp;·&nbsp; Shawarma connoisseur</p>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">🇪🇬</div>
+        <div class="stat-label">Origin</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Stress detected</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Shawarmas consumed</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Shelby's loyalty</div>
+      </div>
+    </div>
+
+    <p class="scroll-hint">↓ the legend</p>
+  </div>
+
+  <section>
+    <p class="section-tag">01 — The man</p>
+    <h2>Who Is<br>Amr</h2>
+    <p>Amr doesn't walk into rooms. He arrives. There's a difference, and he knows the difference, and he doesn't need to explain it to you. Egyptian by blood, cool by default. The kind of person who makes doing nothing look like an art form. When things get hectic, Amr gets quieter. Not because he doesn't notice — he notices everything. He just doesn't let it touch him. And when the day is done, he goes to Shelby's. Gets the shawarma. Because that's what you do when you're Amr.</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <section style="padding-top:5rem;padding-bottom:0">
+    <p class="section-tag">02 — The traits</p>
+    <h2>Built<br>Different</h2>
+  </section>
+
+  <div style="max-width:900px;margin:3rem auto 0;padding:0 2rem 6rem">
+    <div class="trait-grid">
+      <div class="trait-card">
+        <div class="trait-icon">🧊</div>
+        <h3>Unbothered</h3>
+        <p>Operates at a frequency most people can't access. Things just slide off him. The world is loud; Amr is not.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🇪🇬</div>
+        <h3>Egyptian Energy</h3>
+        <p>Thousands of years of civilization running in the background. You don't get that kind of composure overnight.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">😶</div>
+        <h3>Says Little</h3>
+        <p>Doesn't fill silence just to fill it. When Amr speaks, it lands. The ratio of words to impact is off the charts.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🌡️</div>
+        <h3>Cool By Default</h3>
+        <p>Not performing it. Not trying to project it. It's just the baseline. Some people are born at a lower temperature.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🫡</div>
+        <h3>Reliable</h3>
+        <p>If Amr says something, it's done. No follow-ups needed. No reminders. The man is a system that works.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🥙</div>
+        <h3>Shelby's Regular</h3>
+        <p>Has a shawarma spot. Sticks to it. Loyalty to quality. This says everything you need to know about the man.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="shawarma-section">
+    <div class="shawarma-inner">
+      <p class="section-tag">03 — The ritual</p>
+      <h2>Shelby's<br>Shawarma</h2>
+      <p>Some people have a coffee order. Amr has Shelby's. It is not just food — it is a lifestyle, a philosophy, a commitment to knowing what's good and returning to it without apology.</p>
+
+      <div class="shawarma-card">
+        <p>Shelby's isn't a phase. It's not "oh I heard it's decent." Amr has done the research — not in a spreadsheet, not with Yelp reviews — with his mouth, repeatedly, over a long period of time. The verdict was reached long ago. Shelby's is the move. It will always be the move. Other shawarma spots have been tried. They know their place.</p>
+
+        <ul class="order-list">
+          <li><span class="item-name">Chicken shawarma wrap</span><span class="item-freq">The Classic</span></li>
+          <li><span class="item-name">Extra garlic sauce</span><span class="item-freq">Non-negotiable</span></li>
+          <li><span class="item-name">Frequency of visits</span><span class="item-freq">As needed (often)</span></li>
+          <li><span class="item-name">Loyalty to Shelby's</span><span class="item-freq">Unwavering</span></li>
+          <li><span class="item-name">Considered alternatives</span><span class="item-freq">No</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <section>
+    <p class="section-tag">04 — The quotables</p>
+    <h2>Things Amr<br>Has Actually Said</h2>
+
+    <div class="quote-block">
+      <p class="quote-text">"I'm not stressed. I'm just going to Shelby's."</p>
+      <p class="quote-attr">— Amr, on conflict resolution</p>
+    </div>
+    <div class="quote-block">
+      <p class="quote-text">"Yeah."</p>
+      <p class="quote-attr">— Amr, in response to a very long and complicated situation</p>
+    </div>
+    <div class="quote-block">
+      <p class="quote-text">"It's fine."</p>
+      <p class="quote-attr">— Amr, and it genuinely was fine</p>
+    </div>
+    <div class="quote-block">
+      <p class="quote-text">"Shelby's hits different at night."</p>
+      <p class="quote-attr">— Amr, being correct</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <section>
+    <p class="section-tag">05 — The scorecard</p>
+    <h2>Amr<br>By The Numbers</h2>
+
+    <div style="margin-top:2rem;max-width:500px">
+      <div class="rating-bar">
+        <div class="rating-label">Nonchalance <span>98</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:98%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Egyptian heritage clout <span>100</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Shelby's loyalty <span>100</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Words per hour <span>12</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:12%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Shawarmas consumed (estimated) <span>96</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:96%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Overall <span>97</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:97%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="egypt-strip">
+    <div style="background:#c8102e"></div>
+    <div style="background:#ffffff10"></div>
+    <div style="background:#000000"></div>
+  </div>
+
+  <footer>
+    <p>Dedicated to <span>Amr</span> — the nonchalant, the Egyptian, the Shelby's regular.</p>
+    <p style="margin-top:0.5rem;color:#1a1408">Long may the shawarma flow.</p>
+  </footer>
+
+</body>
+</html>

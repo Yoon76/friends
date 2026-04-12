@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AyAron — The One</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+    :root {
+      --black: #0a0a0a;
+      --white: #f5f5f0;
+      --gold: #c9a84c;
+      --dim: #3a3a3a;
+      --accent: #e8d5a3;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #888; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: #c9a84c !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 40%, #1a1608 0%, #0a0a0a 70%);
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9a84c' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .hero-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.5rem;
+      opacity: 0.8;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(6rem, 20vw, 16rem);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-weight: 300;
+      color: var(--accent);
+      margin-top: 1.5rem;
+      letter-spacing: 0.15em;
+    }
+
+    .stats-row {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #888;
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #444;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #bbb;
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      opacity: 0.3;
+    }
+
+    /* ── TRAITS ── */
+    .traits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      background: var(--dim);
+      border: 1px solid var(--dim);
+    }
+
+    .trait {
+      background: var(--black);
+      padding: 2rem;
+    }
+
+    .trait-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .trait h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--gold);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .trait p {
+      font-size: 0.9rem;
+      color: #888;
+    }
+
+    /* ── COMPARISON ── */
+    .comparison {
+      background: #0e0e0e;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+      padding: 6rem 2rem;
+    }
+
+    .comparison-inner {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .versus-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 2rem;
+      align-items: center;
+      margin-top: 3rem;
+    }
+
+    .person-card {
+      padding: 2.5rem 2rem;
+      border: 1px solid;
+      position: relative;
+    }
+
+    .person-card.ayaron {
+      border-color: var(--gold);
+      background: linear-gradient(135deg, #12100a, #0a0a0a);
+    }
+
+    .person-card.sagan {
+      border-color: #2a2a2a;
+      background: #0a0a0a;
+      opacity: 0.6;
+    }
+
+    .person-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.8rem;
+      letter-spacing: 0.05em;
+    }
+
+    .person-card.ayaron .person-name { color: var(--gold); }
+    .person-card.sagan .person-name { color: #555; }
+
+    .person-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .person-card.ayaron .person-tag { color: var(--gold); }
+    .person-card.sagan .person-tag { color: #444; }
+
+    .person-attrs {
+      list-style: none;
+      margin-top: 1.5rem;
+    }
+
+    .person-attrs li {
+      font-size: 0.85rem;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid #1a1a1a;
+      display: flex;
+      justify-content: space-between;
+      color: #999;
+    }
+
+    .person-card.ayaron .person-attrs li { color: #ccc; }
+
+    .person-attrs li span { color: var(--gold); font-weight: 500; }
+    .person-card.sagan .person-attrs li span { color: #555; }
+
+    .vs-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: #2a2a2a;
+      text-align: center;
+    }
+
+    .winner-badge {
+      position: absolute;
+      top: -1px;
+      right: -1px;
+      background: var(--gold);
+      color: var(--black);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      font-weight: 700;
+    }
+
+    /* ── QUOTES ── */
+    .quotes-section { text-align: center; }
+
+    .quote-block {
+      margin: 3rem 0;
+      padding: 3rem;
+      border-left: 3px solid var(--gold);
+      text-align: left;
+      background: #0d0d0d;
+    }
+
+    .quote-text {
+      font-size: 1.4rem;
+      font-style: italic;
+      color: var(--white);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .quote-attr {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    /* ── RATING ── */
+    .rating-bar { margin: 1rem 0; }
+
+    .rating-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-label span { color: var(--gold); }
+
+    .bar-bg {
+      height: 4px;
+      background: #1a1a1a;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold), #fff8e1);
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #333;
+      border-top: 1px solid #111;
+    }
+
+    footer span { color: var(--gold); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/" class="nav-current">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div class="hero">
+    <p class="hero-label">Introducing</p>
+    <h1>AyAron</h1>
+    <p class="hero-sub">6'2 &nbsp;·&nbsp; Unbothered &nbsp;·&nbsp; Inevitable</p>
+
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-num">6'2"</div>
+        <div class="stat-label">Height</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Rizz</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Cares given</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Huzz secured</div>
+      </div>
+    </div>
+
+    <p class="scroll-hint">↓ scroll</p>
+  </div>
+
+  <!-- WHO IS HE -->
+  <section>
+    <p class="section-tag">01 — The man</p>
+    <h2>Who Is<br>AyAron</h2>
+    <p>
+      You know the type. Walks in, doesn't announce himself, and somehow every head turns.
+      AyAron is 6'2 of pure, uncut nonchalance. Chinese by blood, cool by nature.
+      He doesn't chase anything — things just come to him.
+      The vibes are immaculate. The presence is felt before he even speaks.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TRAITS -->
+  <section style="padding-top:5rem;padding-bottom:0">
+    <p class="section-tag">02 — His traits</p>
+    <h2>What Makes<br>Him Him</h2>
+  </section>
+
+  <div style="max-width:900px;margin:3rem auto 0;padding:0 2rem 6rem">
+    <div class="traits">
+      <div class="trait">
+        <div class="trait-icon">🧊</div>
+        <h3>Ice Cold</h3>
+        <p>Nothing rattles him. Someone could spill their drink on him and he'd just slowly look up and say "wild."</p>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">📏</div>
+        <h3>Six Two</h3>
+        <p>Built like someone asked the universe for a main character. Sees over crowds. Sees over problems too.</p>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">😮‍💨</div>
+        <h3>Unbothered</h3>
+        <p>His default expression is the human equivalent of a shrug emoji. Effortless energy at all times.</p>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">🧲</div>
+        <h3>Magnetic</h3>
+        <p>Doesn't text first. Doesn't have to. The huzz finds him. Always has, always will.</p>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">👁️</div>
+        <h3>Sees Everything</h3>
+        <p>Quiet, observant. Knows what's happening in a room before anyone else does. Acts accordingly.</p>
+      </div>
+      <div class="trait">
+        <div class="trait-icon">🏆</div>
+        <h3>Just Better</h3>
+        <p>Not his fault. Some people are built different. AyAron is one of them. Ask Sagan.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUOTES -->
+  <div class="divider"></div>
+  <section class="quotes-section">
+    <p class="section-tag">03 — The quotables</p>
+    <h2>Things AyAron<br>Has Actually Said</h2>
+
+    <div class="quote-block">
+      <p class="quote-text">"Yeah... I'm not really worried about it."</p>
+      <p class="quote-attr">— AyAron, on literally everything</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"Sagan tried. It's fine."</p>
+      <p class="quote-attr">— AyAron, being gracious</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"I wasn't even trying."</p>
+      <p class="quote-attr">— AyAron, after winning again</p>
+    </div>
+  </section>
+
+  <!-- COMPARISON -->
+  <div class="comparison">
+    <div class="comparison-inner">
+      <p class="section-tag">04 — The hierarchy</p>
+      <h2>AyAron vs.<br>The Rest</h2>
+      <p style="margin-bottom:0">An objective, unbiased comparison between AyAron and his associate, Sagan.</p>
+
+      <div class="versus-grid">
+        <div class="person-card ayaron">
+          <div class="winner-badge">Winner</div>
+          <p class="person-tag">The one</p>
+          <p class="person-name">AyAron</p>
+          <ul class="person-attrs">
+            <li>Height <span>6'2"</span></li>
+            <li>Heritage <span>Chinese</span></li>
+            <li>Vibe <span>Nonchalant god</span></li>
+            <li>Huzz <span>Abundant</span></li>
+            <li>Stress level <span>Nonexistent</span></li>
+            <li>Overall <span>10 / 10</span></li>
+          </ul>
+        </div>
+
+        <div class="vs-badge">VS</div>
+
+        <div class="person-card sagan">
+          <p class="person-tag">The associate</p>
+          <p class="person-name">Sagan</p>
+          <ul class="person-attrs">
+            <li>Height <span>Lil bro</span></li>
+            <li>Heritage <span>Indian</span></li>
+            <li>Vibe <span>Trying</span></li>
+            <li>Huzz <span>Pending</span></li>
+            <li>Stress level <span>Elevated</span></li>
+            <li>Overall <span>Solid 6</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATINGS -->
+  <section>
+    <p class="section-tag">05 — The scorecard</p>
+    <h2>AyAron<br>By The Numbers</h2>
+
+    <div style="margin-top:2rem;max-width:500px">
+      <div class="rating-bar">
+        <div class="rating-label">Nonchalance <span>99</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:99%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Height advantage <span>98</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:98%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Rizz <span>97</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:97%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Effortless drip <span>95</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:95%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Better than Sagan <span>100</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Dedicated to <span>AyAron</span> — the nonchalant, the tall, the inevitable.</p>
+    <p style="margin-top:0.5rem;color:#222">Sagan is also okay we guess.</p>
+  </footer>
+
+</body>
+</html>

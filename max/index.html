@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Max Milililililililinovich | Teddy Bear. Occasionally Brain-Dead.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brown: #8B5E3C;
+      --tan: #C9965A;
+      --cream: #F2E4CC;
+      --dark: #0f0c09;
+      --card: #1a1510;
+      --black: #0a0806;
+      --text: #e8ddd0;
+      --muted: #8a7a68;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #888; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: #C9965A !important; }
+
+    /* TICKER */
+    .ticker-wrap {
+      width: 100%;
+      background: var(--brown);
+      padding: 10px 0;
+      overflow: hidden;
+    }
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 28s linear infinite;
+    }
+    .ticker span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      padding: 0 3rem;
+      color: var(--cream);
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: radial-gradient(ellipse at center, #1f1308 0%, var(--black) 70%);
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 50px,
+        rgba(139, 94, 60, 0.03) 50px,
+        rgba(139, 94, 60, 0.03) 51px
+      );
+    }
+
+    .label {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 5px;
+      font-size: 0.85rem;
+      color: var(--tan);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      line-height: 0.95;
+      letter-spacing: 3px;
+      color: #fff;
+      text-shadow: 0 0 60px rgba(139, 94, 60, 0.5);
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 .last-name {
+      display: block;
+      font-size: clamp(1.8rem, 4.5vw, 3.8rem);
+      color: var(--tan);
+      letter-spacing: 6px;
+      margin-top: 0.2rem;
+    }
+
+    .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted);
+      margin-top: 1.8rem;
+      max-width: 600px;
+      line-height: 1.7;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+    .tagline em { color: var(--tan); font-style: normal; }
+
+    .split-tags {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+    .split-tag {
+      padding: 0.6rem 1.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 3px;
+      font-size: 0.9rem;
+    }
+    .split-tag.soft {
+      border: 1px solid var(--brown);
+      background: rgba(139, 94, 60, 0.12);
+      color: var(--tan);
+    }
+    .split-tag.hard {
+      border: 1px solid #333;
+      background: rgba(255,255,255,0.04);
+      color: var(--muted);
+    }
+
+    /* DUALITY */
+    .duality-section {
+      padding: 5rem 2rem;
+      background: var(--dark);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      text-align: center;
+      letter-spacing: 3px;
+      margin-bottom: 3rem;
+    }
+    .section-title span { color: var(--tan); }
+
+    .duality-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    @media (max-width: 600px) {
+      .duality-grid { grid-template-columns: 1fr; }
+    }
+    .duality-side {
+      padding: 3rem 2.5rem;
+    }
+    .duality-side.left {
+      background: rgba(139, 94, 60, 0.1);
+      border: 1px solid rgba(139, 94, 60, 0.3);
+      border-right: none;
+    }
+    .duality-side.right {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid #222;
+    }
+    .duality-side h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 3px;
+      margin-bottom: 1.2rem;
+    }
+    .duality-side.left h3 { color: var(--tan); }
+    .duality-side.right h3 { color: #555; }
+    .duality-side ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .duality-side ul li {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.6;
+      padding-left: 1.2rem;
+      position: relative;
+    }
+    .duality-side.left ul li::before { content: '✓'; position: absolute; left: 0; color: var(--tan); }
+    .duality-side.right ul li::before { content: '✗'; position: absolute; left: 0; color: #444; }
+
+    /* STATS */
+    .stats-section {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid #1e1a14;
+      border-top: 3px solid var(--brown);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.2rem;
+      color: var(--tan);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.78rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* INCIDENT */
+    .incident-section {
+      padding: 5rem 2rem;
+      background: #0c0806;
+      border-top: 1px solid #1a1408;
+      border-bottom: 1px solid #1a1408;
+    }
+    .incident-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .incident-inner h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      letter-spacing: 3px;
+      text-align: center;
+      margin-bottom: 0.5rem;
+    }
+    .incident-inner h2 span { color: var(--tan); }
+    .incident-subtitle {
+      text-align: center;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 3rem;
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 28px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--brown), transparent);
+    }
+    .timeline-step {
+      display: flex;
+      gap: 1.5rem;
+      padding-bottom: 2.5rem;
+      position: relative;
+    }
+    .step-dot {
+      min-width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--brown);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      color: var(--tan);
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+    .step-dot.red {
+      border-color: #8b0000;
+      color: #c0392b;
+    }
+    .step-content {
+      padding-top: 0.8rem;
+    }
+    .step-content h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.3rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.4rem;
+      color: var(--text);
+    }
+    .step-content h4.danger { color: #c0392b; }
+    .step-content p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .verdict-box {
+      margin-top: 2.5rem;
+      padding: 2rem;
+      background: rgba(139, 0, 0, 0.08);
+      border: 1px solid #3a0808;
+      text-align: center;
+    }
+    .verdict-box p {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+    .verdict-box strong {
+      color: #c0392b;
+      display: block;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 3px;
+      margin-bottom: 0.5rem;
+    }
+
+    /* BEAR */
+    .bear-section {
+      padding: 5rem 2rem;
+      background: var(--dark);
+    }
+    .bear-inner {
+      max-width: 750px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .bear-inner p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.9;
+      margin-bottom: 1.4rem;
+    }
+    .bear-inner em { color: var(--tan); font-style: normal; font-weight: 600; }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      background: var(--black);
+      border-top: 1px solid #1a1410;
+    }
+    footer .big {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 4px;
+      color: #2a2018;
+      margin-bottom: 0.5rem;
+    }
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/" class="nav-current">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>TEDDY BEAR</span>
+      <span>•</span>
+      <span>GENUINELY SMART</span>
+      <span>•</span>
+      <span>OCCASIONALLY BRAIN-DEAD</span>
+      <span>•</span>
+      <span>SELF-REPORTED CHEATING INCIDENT OF THE YEAR</span>
+      <span>•</span>
+      <span>MAX MILILILILILILILINOVICH</span>
+      <span>•</span>
+      <span>EVERYONE LOVES HIM</span>
+      <span>•</span>
+      <span>ASKED THE TEACHER WHAT HE SHOULDN'T HAVE</span>
+      <span>•</span>
+      <span>TEDDY BEAR</span>
+      <span>•</span>
+      <span>GENUINELY SMART</span>
+      <span>•</span>
+      <span>OCCASIONALLY BRAIN-DEAD</span>
+      <span>•</span>
+      <span>SELF-REPORTED CHEATING INCIDENT OF THE YEAR</span>
+      <span>•</span>
+      <span>MAX MILILILILILILILINOVICH</span>
+      <span>•</span>
+      <span>EVERYONE LOVES HIM</span>
+      <span>•</span>
+      <span>ASKED THE TEACHER WHAT HE SHOULDN'T HAVE</span>
+      <span>•</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="label">Friend Group Official Profile</p>
+    <h1>
+      MAX
+      <span class="last-name">MILILILILILILILINOVICH</span>
+    </h1>
+    <p class="tagline">
+      Sweet. Smart. A genuine teddy bear 90% of the time.<br />
+      The other 10% is <em>genuinely inexplicable.</em>
+    </p>
+    <div class="split-tags">
+      <div class="split-tag soft">Certified Teddy Bear</div>
+      <div class="split-tag soft">Actually Smart</div>
+      <div class="split-tag hard">Casually Self-Incriminating</div>
+      <div class="split-tag hard">Audacity Off The Charts</div>
+    </div>
+  </section>
+
+  <!-- DUALITY -->
+  <section class="duality-section">
+    <h2 class="section-title">The <span>Two Maxes</span></h2>
+    <div class="duality-grid">
+      <div class="duality-side left">
+        <h3>The Good Max</h3>
+        <ul>
+          <li>Genuinely one of the smarter people in the room</li>
+          <li>Warm, soft energy — actual teddy bear energy</li>
+          <li>The kind of guy you want around when things are bad</li>
+          <li>Easy to talk to, never makes things weird</li>
+          <li>People gravitate toward him naturally</li>
+          <li>Has a good heart, everyone knows it</li>
+        </ul>
+      </div>
+      <div class="duality-side right">
+        <h3>The Other Max</h3>
+        <ul>
+          <li>Occasionally says the dumbest thing in the room</li>
+          <li>Does not think before speaking. Not even briefly.</li>
+          <li>Will accidentally confess to crimes mid-sentence</li>
+          <li>Smart enough to cheat, not smart enough to hide it</li>
+          <li>Raises his hand at the exact wrong moment</li>
+          <li>Has no idea he just did what he just did</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <h2 class="section-title">By The <span>Numbers</span></h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">90%</div>
+        <div class="stat-label">Pure Teddy Bear</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">10%</div>
+        <div class="stat-label">Absolute Disaster</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">1</div>
+        <div class="stat-label">Self-Reports To Date</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Seconds Of Hesitation</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Syllables In His Last Name</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE INCIDENT -->
+  <section class="incident-section">
+    <div class="incident-inner">
+      <h2>The <span>Incident</span></h2>
+      <p class="incident-subtitle">A Reconstructed Timeline — Classified</p>
+
+      <div class="timeline">
+        <div class="timeline-step">
+          <div class="step-dot">1</div>
+          <div class="step-content">
+            <h4>The Setup</h4>
+            <p>A student in a prior period takes the quiz. Standard stuff. They finish, they leave, they go about their day. Somewhere along the way, the questions find their way to Max. This is where the story begins.</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-dot">2</div>
+          <div class="step-content">
+            <h4>The Preparation</h4>
+            <p>Max, armed with prior knowledge of the quiz questions, walks into class feeling prepared. He has done the research. He knows what is coming. He is, by all accounts, ready. This confidence will prove to be his downfall.</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-dot red">3</div>
+          <div class="step-content">
+            <h4 class="danger">The Question</h4>
+            <p>The teacher is explaining something. Max raises his hand. Max asks — out loud, in front of everyone, directly to the teacher — whether a specific question is going to be on the quiz. A question he could only have known about one way. A question from a quiz no one in this class had seen yet.</p>
+          </div>
+        </div>
+        <div class="timeline-step">
+          <div class="step-dot red">4</div>
+          <div class="step-content">
+            <h4 class="danger">The Silence</h4>
+            <p>The room processes what just happened. The teacher processes what just happened. Everyone within earshot processes what just happened. Max does not process what just happened. He is waiting for an answer.</p>
+          </div>
+        </div>
+        <div class="timeline-step" style="padding-bottom: 0;">
+          <div class="step-dot">5</div>
+          <div class="step-content">
+            <h4>The Aftermath</h4>
+            <p>Max continues existing as if nothing occurred. This is, somehow, the most impressive part. The intellectual horsepower required to not connect those two dots is, in its own way, extraordinary.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="verdict-box">
+        <strong>Official Verdict</strong>
+        <p>
+          In the entire history of academic dishonesty, no one has ever reported themselves so thoroughly, so publicly, and so cheerfully. Max did not just cheat. He raised his hand to announce it. He volunteered the confession. He did it with the energy of someone who thought he was being helpful.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- TEDDY BEAR -->
+  <section class="bear-section">
+    <div class="bear-inner">
+      <h2 class="section-title">Still A <span>Teddy Bear</span> Though</h2>
+      <p>
+        The thing is — and this is important — none of it makes you like him less. That is the Max Milililililililinovich paradox. He can do something that defies all logic and within five minutes you have completely forgiven him because <em>he is just so genuinely warm.</em>
+      </p>
+      <p>
+        He is the friend who checks in on you. The one who remembers things you said three weeks ago. The one who makes a room feel safer just by being in it. He is, at his core, a big soft teddy bear in a human costume.
+      </p>
+      <p>
+        The brain occasionally misfires. The heart never does. You cannot stay frustrated with someone who <em>genuinely means well every single time,</em> even when the results are catastrophic.
+      </p>
+      <p style="color: var(--text); font-weight: 600;">
+        Max Milililililililinovich: smart, kind, dangerous only to himself, and beloved by everyone who has ever met him.
+      </p>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="big">MAX MILILILILILILILINOVICH</p>
+    <p>CERTIFIED TEDDY BEAR &nbsp;·&nbsp; GENUINELY SMART &nbsp;·&nbsp; WORLD'S MOST ACCIDENTAL SELF-REPORTER &nbsp;·&nbsp; BELOVED BY ALL</p>
+    <p style="margin-top: 1rem;">"He asked the teacher if the question was on the quiz. He got the question from someone who already took the quiz. He did not see the problem."</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T-Bone | AP Bio's Biggest Mistake</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --red: #c8102e;
+      --silver: #a5acaf;
+      --black: #0a0a0a;
+      --dark: #111111;
+      --card: #181818;
+      --text: #e8e8e8;
+      --muted: #888;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #888; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: #c8102e !important; }
+
+    /* TICKER */
+    .ticker-wrap {
+      width: 100%;
+      background: var(--red);
+      padding: 10px 0;
+      overflow: hidden;
+    }
+    .ticker {
+      display: flex;
+      white-space: nowrap;
+      animation: ticker 22s linear infinite;
+    }
+    .ticker span {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      padding: 0 3rem;
+      color: #fff;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      background: radial-gradient(ellipse at center, #1a0608 0%, var(--black) 70%);
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 40px,
+        rgba(200, 16, 46, 0.03) 40px,
+        rgba(200, 16, 46, 0.03) 41px
+      );
+    }
+
+    .label {
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 5px;
+      font-size: 0.85rem;
+      color: var(--red);
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 14rem);
+      line-height: 0.9;
+      letter-spacing: 4px;
+      color: #fff;
+      text-shadow: 0 0 60px rgba(200, 16, 46, 0.4);
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 span { color: var(--red); }
+
+    .tagline {
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      color: var(--silver);
+      margin-top: 1.5rem;
+      max-width: 600px;
+      line-height: 1.6;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
+    }
+
+    .tagline em { color: var(--red); font-style: normal; }
+
+    .quote-box {
+      margin-top: 2.5rem;
+      padding: 1.2rem 2rem;
+      border-left: 4px solid var(--red);
+      background: rgba(200, 16, 46, 0.07);
+      max-width: 580px;
+      text-align: left;
+      position: relative;
+      z-index: 1;
+    }
+    .quote-box p {
+      font-size: 1rem;
+      color: var(--silver);
+      line-height: 1.7;
+      font-style: italic;
+    }
+    .quote-box .attribution {
+      margin-top: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-style: normal;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* STATS */
+    .stats-section {
+      padding: 5rem 2rem;
+      background: var(--dark);
+    }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      text-align: center;
+      letter-spacing: 3px;
+      margin-bottom: 3rem;
+      color: #fff;
+    }
+    .section-title span { color: var(--red); }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid #222;
+      border-top: 3px solid var(--red);
+      padding: 2rem 1.5rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3.5rem;
+      color: var(--red);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.5rem;
+    }
+
+    /* CARDS */
+    .cards-section {
+      padding: 5rem 2rem;
+      background: var(--black);
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid #222;
+      padding: 2rem;
+    }
+    .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+    .card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 2px;
+      color: var(--red);
+      margin-bottom: 0.75rem;
+    }
+    .card p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* JONES SECTION */
+    .jones-section {
+      padding: 5rem 2rem;
+      background: #0e0505;
+      border-top: 1px solid #2a0a0a;
+      border-bottom: 1px solid #2a0a0a;
+    }
+    .jones-inner {
+      max-width: 750px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .jones-inner h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      letter-spacing: 3px;
+      margin-bottom: 1rem;
+    }
+    .jones-inner h2 span { color: var(--red); }
+    .jones-inner p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+    }
+    .jones-grades {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    .grade-pill {
+      padding: 0.6rem 1.4rem;
+      border: 1px solid #333;
+      background: var(--card);
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 2px;
+      font-size: 1rem;
+      color: var(--silver);
+    }
+    .grade-pill.bad {
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* SPORTS */
+    .sports-section {
+      padding: 5rem 2rem;
+      background: var(--dark);
+    }
+    .sports-inner { max-width: 800px; margin: 0 auto; }
+    .team-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 1.5rem;
+      padding: 2rem;
+      background: var(--card);
+      border: 1px solid #222;
+      margin-bottom: 1.2rem;
+    }
+    .team-badge {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.5rem;
+      line-height: 1;
+      color: var(--red);
+      min-width: 60px;
+      text-align: center;
+    }
+    .team-info h4 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      margin-bottom: 0.4rem;
+    }
+    .team-info p {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .verdict {
+      display: inline-block;
+      margin-top: 0.6rem;
+      padding: 0.25rem 0.8rem;
+      background: rgba(200, 16, 46, 0.15);
+      border: 1px solid var(--red);
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--red);
+      font-weight: 700;
+    }
+
+    /* FOOTER */
+    footer {
+      padding: 3rem 2rem;
+      text-align: center;
+      background: var(--black);
+      border-top: 1px solid #1a1a1a;
+    }
+    footer p {
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    footer .big {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem;
+      letter-spacing: 4px;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE CREW</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/" class="nav-current">T-BONE</a>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <span>THE CLASS CLOWN</span>
+      <span>•</span>
+      <span>MRS. JONES HATES HIM</span>
+      <span>•</span>
+      <span>REDS FAN</span>
+      <span>•</span>
+      <span>RAIDERS FAN</span>
+      <span>•</span>
+      <span>THEY LAUGH AT HIM NOT WITH HIM</span>
+      <span>•</span>
+      <span>5'1 AT BEST</span>
+      <span>•</span>
+      <span>AP BIO'S BIGGEST MISTAKE</span>
+      <span>•</span>
+      <span>THE CLASS CLOWN</span>
+      <span>•</span>
+      <span>MRS. JONES HATES HIM</span>
+      <span>•</span>
+      <span>REDS FAN</span>
+      <span>•</span>
+      <span>RAIDERS FAN</span>
+      <span>•</span>
+      <span>THEY LAUGH AT HIM NOT WITH HIM</span>
+      <span>•</span>
+      <span>5'1 AT BEST</span>
+      <span>•</span>
+      <span>AP BIO'S BIGGEST MISTAKE</span>
+      <span>•</span>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="label">AP Biology — Period Unknown — Seat: Front Row (Assigned)</p>
+    <h1>T-<span>BONE</span></h1>
+    <p class="tagline">
+      The room erupts every time he opens his mouth.<br />
+      <em>Nobody is laughing with him.</em>
+    </p>
+    <div class="quote-box">
+      <p>"I genuinely do not understand how he passed the entrance exam. Or the door."</p>
+      <p class="attribution">— Mrs. Jones, probably</p>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-section">
+    <h2 class="section-title">The <span>Résumé</span></h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">5'1"</div>
+        <div class="stat-label">Height (Generous)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Times Mrs. Jones Has Been Impressed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">2</div>
+        <div class="stat-label">Losing Teams He Roots For</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Bad Takes Per Day</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Of Laughs Are AT Him</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">F</div>
+        <div class="stat-label">Projected AP Exam Score</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="cards-section">
+    <h2 class="section-title">A Full <span>Breakdown</span></h2>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🤡</div>
+        <h3>Class Clown</h3>
+        <p>Every AP Bio class, T-Bone shows up ready to perform for an audience that did not ask for a show. He confuses the room going silent with the room being entertained. They are not the same thing.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📏</div>
+        <h3>Vertically Challenged</h3>
+        <p>Standing at a height that generously rounds up to 5'1", T-Bone shares this curse with the legendary Jasper. The main difference is Jasper knows he's short. T-Bone still hasn't figured it out.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">😐</div>
+        <h3>Laughed At, Not With</h3>
+        <p>There is a critical distinction between being the funny one and being the funny-looking one. T-Bone has never been within zip code of the former. Every laugh he hears is a verdict, not a reward.</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏈</div>
+        <h3>Terrible Sports Opinions</h3>
+        <p>Somehow managed to pledge loyalty to both the Cincinnati Reds and the Las Vegas Raiders — two franchises that exist to teach children about grief. His hot takes are served cold, wrong, and confidently.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MRS JONES -->
+  <section class="jones-section">
+    <div class="jones-inner">
+      <h2>The <span>Mrs. Jones</span> Files</h2>
+      <p>
+        Mrs. Jones has taught AP Biology for years. She has seen struggling students, distracted students, and students who simply needed more time. T-Bone is a category she had to invent.
+      </p>
+      <p>
+        She does not dislike him as a person. She dislikes what he does to her classroom, her lesson plan, her will to teach, and her blood pressure. Every time he raises his hand she takes a breath and prepares for the worst. The worst always delivers.
+      </p>
+      <p>
+        She has stopped calling on him voluntarily. She has started ending class slightly early to avoid the questions. She once looked directly at him and said "I don't know why you're in this class" and then moved on without waiting for an answer. Neither did he.
+      </p>
+      <div class="jones-grades">
+        <div class="grade-pill bad">Mitosis Quiz: 47%</div>
+        <div class="grade-pill bad">Cell Respiration Lab: Incomplete</div>
+        <div class="grade-pill bad">AP Practice Exam: "Please retake"</div>
+        <div class="grade-pill">Participation: Unfortunately High</div>
+        <div class="grade-pill bad">Mrs. Jones Approval Rating: 0%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPORTS -->
+  <section class="sports-section">
+    <h2 class="section-title" style="text-align:center;">Sports <span>Corner</span></h2>
+    <div class="sports-inner">
+      <div class="team-row">
+        <div class="team-badge">C</div>
+        <div class="team-info">
+          <h4>Cincinnati Reds</h4>
+          <p>
+            The Reds have not been relevant since the Big Red Machine era, which ended before T-Bone was born. He inherited this suffering and calls it loyalty. He talks about their rebuild every single year. Every year they do not rebuild. He remains optimistic. This is concerning.
+          </p>
+          <span class="verdict">Rebuilt Since: Never</span>
+        </div>
+      </div>
+      <div class="team-row">
+        <div class="team-badge">R</div>
+        <div class="team-info">
+          <h4>Las Vegas Raiders</h4>
+          <p>
+            The Raiders have moved cities multiple times, fired coaches mid-season, and imploded spectacularly on national television. T-Bone defends them with the passion of someone who bet their savings on them. He has never been right about a single Raider prediction. Not one. Documented.
+          </p>
+          <span class="verdict">Championship Wins This Decade: 0</span>
+        </div>
+      </div>
+      <div style="padding: 1.5rem 2rem; background: rgba(200,16,46,0.06); border: 1px solid #2a0a0a; margin-top: 0.5rem; text-align: center;">
+        <p style="color: var(--muted); font-size: 0.9rem; line-height: 1.8;">
+          Combined, his two teams have given him nothing but loss, relocation, and embarrassment on the national stage.<br />
+          <strong style="color: var(--silver);">His sports opinions are not just wrong. They are a lifestyle choice to suffer.</strong>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CUTIE PATOOTIE -->
+  <section style="padding: 5rem 2rem; background: var(--black); border-top: 1px solid #1a1a1a;">
+    <div style="max-width: 750px; margin: 0 auto; text-align: center;">
+      <p class="label" style="color: var(--red);">Unanimous Friend Group Verdict</p>
+      <h2 style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 6vw, 4.5rem); letter-spacing: 3px; margin-bottom: 1.5rem;">
+        The <span style="color: var(--red);">Cutie Patootie</span>
+      </h2>
+      <p style="color: var(--muted); font-size: 1rem; line-height: 1.9; margin-bottom: 1.5rem;">
+        Here is the thing about T-Bone that nobody talks about enough. Despite everything — the bad sports takes, the AP Bio disasters, the Mrs. Jones incidents — the guy is, objectively, adorable. It is deeply annoying. It should not be allowed.
+      </p>
+      <p style="color: var(--muted); font-size: 1rem; line-height: 1.9; margin-bottom: 1.5rem;">
+        He is the cutie patootie of the friend group and the whole friend group knows it. You cannot stay fully mad at him. He says something clueless and you are halfway through being disappointed and then he does that thing with his face and suddenly you are fine. It is a superpower he has no idea he has.
+      </p>
+      <p style="color: var(--muted); font-size: 1rem; line-height: 1.9; margin-bottom: 2.5rem;">
+        Small, chaotic, somehow charming. Even Mrs. Jones probably goes home and thinks "okay but he wasn't the worst." She would never say it. But she thinks it.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <div style="padding: 0.6rem 1.4rem; border: 1px solid #333; background: var(--card); font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; color: var(--silver);">Certified Adorable</div>
+        <div style="padding: 0.6rem 1.4rem; border: 1px solid var(--red); background: rgba(200,16,46,0.08); font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; color: var(--red);">Unfairly Likeable</div>
+        <div style="padding: 0.6rem 1.4rem; border: 1px solid #333; background: var(--card); font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; color: var(--silver);">Group Mascot</div>
+        <div style="padding: 0.6rem 1.4rem; border: 1px solid var(--red); background: rgba(200,16,46,0.08); font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; font-size: 1rem; color: var(--red);">Cannot Stay Mad</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p class="big">T-BONE</p>
+    <p>AP BIOLOGY CLASS CLOWN &nbsp;·&nbsp; CERTIFIED TINY &nbsp;·&nbsp; REDS & RAIDERS FAITHFUL &nbsp;·&nbsp; MRS. JONES' LEAST FAVORITE &nbsp;·&nbsp; CUTIE PATOOTIE</p>
+    <p style="margin-top:1rem;">"The class laughs. Mrs. Jones sighs. He does not notice either. Everyone still loves him somehow."</p>
+  </footer>
+
+</body>
+</html>
