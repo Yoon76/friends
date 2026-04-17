@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--red);
       --black: #0a0a0a;
       --white: #f5f5f0;
       --red: #c0392b;
@@ -46,7 +47,7 @@
     .site-nav a:hover { color: #888; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: #c0392b !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── HERO ── */
     .hero {
@@ -563,5 +564,13 @@
     <p style="margin-top:0.5rem;color:#1a1a1a">Sagan — a solid 6. Keep your head up lil bro.</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('sagan');
+    });
+  </script>
 </body>
 </html>

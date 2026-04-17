@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
+      --nav-current: var(--red);
       --red: #c8102e;
       --silver: #a5acaf;
       --black: #0a0a0a;
@@ -47,7 +48,7 @@
     .site-nav a:hover { color: #888; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: #c8102e !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* TICKER */
     .ticker-wrap {
@@ -555,5 +556,13 @@
     <p style="margin-top:1rem;">"The class laughs. Mrs. Jones sighs. He does not notice either. Everyone still loves him somehow."</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('t-bone');
+    });
+  </script>
 </body>
 </html>

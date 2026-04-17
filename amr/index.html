@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--sand);
       --black: #08080a;
       --white: #f5f2e8;
       --sand: #c8a05a;
@@ -48,7 +49,7 @@
     .site-nav a:hover { color: #aaa; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: var(--sand) !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── HERO ── */
     .hero {
@@ -523,5 +524,13 @@
     <p style="margin-top:0.5rem;color:#1a1408">Long may the shawarma flow.</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('amr');
+    });
+  </script>
 </body>
 </html>

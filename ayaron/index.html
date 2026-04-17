@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--gold);
       --black: #0a0a0a;
       --white: #f5f5f0;
       --gold: #c9a84c;
@@ -46,7 +47,7 @@
     .site-nav a:hover { color: #888; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: #c9a84c !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── HERO ── */
     .hero {
@@ -557,5 +558,13 @@
     <p style="margin-top:0.5rem;color:#222">Sagan is also okay we guess.</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('ayaron');
+    });
+  </script>
 </body>
 </html>

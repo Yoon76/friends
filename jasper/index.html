@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--orange);
       --black: #080810;
       --white: #f0f0ff;
       --orange: #e05c00;
@@ -47,7 +48,7 @@
     .site-nav a:hover { color: #888; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: #e05c00 !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── TICKER ── */
     .ticker {
@@ -667,5 +668,13 @@
     <p style="margin-top:0.5rem;color:#1a1a22">Jasper — a 5'1 menace. We would not change him. (We would change the height fraud.)</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('jasper');
+    });
+  </script>
 </body>
 </html>

@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--purple);
       --black: #08050a;
       --white: #f0eef5;
       --purple: #9b59b6;
@@ -47,7 +48,7 @@
     .site-nav a:hover { color: #8866aa; }
     .nav-back { color: #554466 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: var(--purple) !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── TICKER ── */
     .ticker {
@@ -452,5 +453,13 @@
     <p style="margin-top:0.5rem;color:#1a0a2a">This is an official warning from The Files.</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('ahmed');
+    });
+  </script>
 </body>
 </html>

@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
+      --nav-current: var(--tan);
       --brown: #8B5E3C;
       --tan: #C9965A;
       --cream: #F2E4CC;
@@ -48,7 +49,7 @@
     .site-nav a:hover { color: #888; }
     .nav-back { color: #555 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: #C9965A !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* TICKER */
     .ticker-wrap {
@@ -607,5 +608,13 @@
     <p style="margin-top: 1rem;">"He asked the teacher if the question was on the quiz. He got the question from someone who already took the quiz. He did not see the problem."</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('max');
+    });
+  </script>
 </body>
 </html>

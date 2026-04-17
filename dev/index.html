@@ -8,6 +8,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
 
     :root {
+      --nav-current: var(--blue);
       --black: #05080a;
       --white: #eef2f5;
       --blue: #3498db;
@@ -47,7 +48,7 @@
     .site-nav a:hover { color: #66a8aa; }
     .nav-back { color: #445566 !important; }
     .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
-    .nav-current { color: var(--blue) !important; }
+    .nav-current { color: var(--nav-current) !important; }
 
     /* ── TICKER ── */
     .ticker {
@@ -455,5 +456,13 @@
     <p style="margin-top:0.5rem;color:#0a1a2a">Your computer does not have a virus. Dev does.</p>
   </footer>
 
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('dev');
+    });
+  </script>
 </body>
 </html>
