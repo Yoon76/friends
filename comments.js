@@ -77,7 +77,12 @@ function renderLayout(container, session) {
     // Attach Events
     if (!user) {
         document.getElementById('login-btn').addEventListener('click', () => {
-            _supabase.auth.signInWithOAuth({ provider: 'google' });
+            _supabase.auth.signInWithOAuth({ 
+                provider: 'google',
+                options: {
+                    redirectTo: window.location.href
+                }
+            });
         });
     } else {
         document.getElementById('logout-btn').addEventListener('click', () => _supabase.auth.signOut());
