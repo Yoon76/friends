@@ -27,12 +27,12 @@ async function initComments(profileId) {
     // Check current session
     let { data: { session } } = await _supabase.auth.getSession();
 
-    renderLayout(container, session);
+    renderLayout(container, session, profileId);
     loadComments(profileId);
 
     // Listen for auth changes
     _supabase.auth.onAuthStateChange((_event, session) => {
-        renderLayout(container, session);
+        renderLayout(container, session, profileId);
         loadComments(profileId);
     });
 
@@ -44,13 +44,16 @@ async function initComments(profileId) {
             schema: 'public', 
             table: 'comments',
             filter: `profile_id=eq.${profileId}`
-        }, () => {
+        }, (payload) => {
+            console.log('Realtime Comment:', payload);
             loadComments(profileId);
         })
-        .subscribe();
+        .subscribe((status) => {
+            console.log(`Comment Stream (${profileId}) Status:`, status);
+        });
 }
 
-function renderLayout(container, session) {
+function renderLayout(container, session, profileId) {
     const user = session?.user;
     const displayName = user?.user_metadata?.full_name || user?.email || 'Authenticated User';
 
@@ -93,12 +96,11 @@ function renderLayout(container, session) {
     // Attach Events
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             _supabase.auth.signInWithOAuth({ 
                 provider: 'google',
-                options: {
-                    redirectTo: window.location.href
-                }
+                options: { redirectTo: window.location.href }
             });
         });
     }
@@ -110,7 +112,7 @@ function renderLayout(container, session) {
 
     const commentForm = document.getElementById('comment-form');
     if (commentForm) {
-        commentForm.addEventListener('submit', (e) => handlePostComment(e, user));
+        commentForm.addEventListener('submit', (e) => handlePostComment(e, user, profileId));
     }
 }
 
@@ -155,9 +157,8 @@ async function loadComments(profileId) {
     }).join('');
 }
 
-async function handlePostComment(e, user) {
+async function handlePostComment(e, user, profileId) {
     e.preventDefault();
-    const profileId = window.location.pathname.split('/').filter(Boolean).pop() || 'home';
     const content = document.getElementById('comment-content').value;
     const submitBtn = document.getElementById('submit-btn');
 
@@ -180,13 +181,12 @@ async function handlePostComment(e, user) {
 
     if (error) {
         alert("Error: " + error.message);
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Post Comment';
     } else {
         document.getElementById('comment-content').value = '';
         const guestNameInput = document.getElementById('guest-name');
         if (guestNameInput) guestNameInput.value = '';
-        loadComments(profileId);
+        // Realtime will handle update
     }
-
-    submitBtn.disabled = false;
-    submitBtn.innerText = 'Post Comment';
 }
