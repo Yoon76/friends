@@ -26,6 +26,13 @@ function getBadge(userId) {
         : `<span class="badge unverified">UNVERIFIED</span>`;
 }
 
+function toggleHero(show) {
+    const hero = document.getElementById('forum-hero');
+    if (hero) {
+        hero.style.display = show ? 'flex' : 'none';
+    }
+}
+
 async function initForum() {
     const urlParams = new URLSearchParams(window.location.search);
     const threadId = urlParams.get('id');
@@ -53,33 +60,27 @@ async function initForum() {
     // --- REALTIME SUBSCRIPTIONS ---
     
     // Subscribe to new threads
-    const threadChannel = _supabase
+    _supabase
         .channel('public:threads')
-        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'threads' }, (payload) => {
-            console.log('Realtime Thread:', payload);
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'threads' }, () => {
             const currentParams = new URLSearchParams(window.location.search);
             if (!currentParams.get('id')) {
                 listThreads(session);
             }
         })
-        .subscribe((status) => {
-            console.log('Thread Stream Status:', status);
-        });
+        .subscribe();
 
     // Subscribe to new replies
-    const replyChannel = _supabase
+    _supabase
         .channel('public:replies')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'replies' }, (payload) => {
-            console.log('Realtime Reply:', payload);
             const currentParams = new URLSearchParams(window.location.search);
             const activeId = currentParams.get('id');
             if (activeId && payload.new.thread_id == activeId) {
                 viewThread(activeId, session);
             }
         })
-        .subscribe((status) => {
-            console.log('Reply Stream Status:', status);
-        });
+        .subscribe();
 }
 
 function renderAuthArea(container, session, isReply = false, threadId = null) {
@@ -152,9 +153,7 @@ function renderAuthArea(container, session, isReply = false, threadId = null) {
 }
 
 async function listThreads(session) {
-    const hero = document.getElementById('forum-hero');
-    if (hero) hero.style.display = 'flex';
-    
+    toggleHero(true);
     document.getElementById('list-view').classList.remove('view-hidden');
     document.getElementById('thread-view').classList.add('view-hidden');
     
@@ -195,9 +194,7 @@ async function listThreads(session) {
 }
 
 async function viewThread(threadId, session) {
-    const hero = document.getElementById('forum-hero');
-    if (hero) hero.style.display = 'none';
-
+    toggleHero(false);
     document.getElementById('list-view').classList.add('view-hidden');
     document.getElementById('thread-view').classList.remove('view-hidden');
 
@@ -295,7 +292,6 @@ async function handleCreateThread(e, user) {
         document.getElementById('thread-title').value = '';
         document.getElementById('thread-content').value = '';
         if (document.getElementById('guest-name')) document.getElementById('guest-name').value = '';
-        // Realtime will handle the list update
     }
 }
 
@@ -329,7 +325,6 @@ async function handlePostReply(e, user, threadId) {
         document.getElementById('reply-content').value = '';
         const guestNameInput = document.getElementById('guest-name');
         if (guestNameInput) guestNameInput.value = '';
-        // Realtime will handle the refresh
     }
 }
 
