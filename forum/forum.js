@@ -49,6 +49,31 @@ async function initForum() {
             listThreads(session);
         }
     });
+
+    // --- REALTIME SUBSCRIPTIONS ---
+    
+    // Subscribe to new threads
+    _supabase
+        .channel('public:threads')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'threads' }, () => {
+            const currentParams = new URLSearchParams(window.location.search);
+            if (!currentParams.get('id')) {
+                listThreads(session);
+            }
+        })
+        .subscribe();
+
+    // Subscribe to new replies
+    _supabase
+        .channel('public:replies')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'replies' }, (payload) => {
+            const currentParams = new URLSearchParams(window.location.search);
+            const activeId = currentParams.get('id');
+            if (activeId && payload.new.thread_id == activeId) {
+                viewThread(activeId, session);
+            }
+        })
+        .subscribe();
 }
 
 function renderAuthArea(container, session, isReply = false, threadId = null) {
@@ -121,6 +146,7 @@ function renderAuthArea(container, session, isReply = false, threadId = null) {
 }
 
 async function listThreads(session) {
+    document.getElementById('forum-hero').style.display = 'flex';
     document.getElementById('list-view').classList.remove('view-hidden');
     document.getElementById('thread-view').classList.add('view-hidden');
     
@@ -161,6 +187,7 @@ async function listThreads(session) {
 }
 
 async function viewThread(threadId, session) {
+    document.getElementById('forum-hero').style.display = 'none';
     document.getElementById('list-view').classList.add('view-hidden');
     document.getElementById('thread-view').classList.remove('view-hidden');
 
@@ -255,7 +282,11 @@ async function handleCreateThread(e, user) {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Create Thread';
     } else {
-        window.location.reload();
+        // Realtime will handle the update if we are on the list view
+        document.getElementById('thread-title').value = '';
+        document.getElementById('thread-content').value = '';
+        if (document.getElementById('guest-name')) document.getElementById('guest-name').value = '';
+        listThreads(user ? { user } : null);
     }
 }
 
@@ -286,10 +317,10 @@ async function handlePostReply(e, user, threadId) {
         submitBtn.disabled = false;
         submitBtn.innerText = 'Post Reply';
     } else {
+        // Realtime will handle the refresh
         document.getElementById('reply-content').value = '';
         const guestNameInput = document.getElementById('guest-name');
         if (guestNameInput) guestNameInput.value = '';
-        viewThread(threadId, session); // Refresh view
     }
 }
 

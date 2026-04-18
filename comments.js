@@ -35,6 +35,19 @@ async function initComments(profileId) {
         renderLayout(container, session);
         loadComments(profileId);
     });
+
+    // --- REALTIME SUBSCRIPTIONS ---
+    _supabase
+        .channel(`public:comments:${profileId}`)
+        .on('postgres_changes', { 
+            event: 'INSERT', 
+            schema: 'public', 
+            table: 'comments',
+            filter: `profile_id=eq.${profileId}`
+        }, () => {
+            loadComments(profileId);
+        })
+        .subscribe();
 }
 
 function renderLayout(container, session) {
