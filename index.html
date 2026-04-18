@@ -66,17 +66,67 @@
       position: relative;
     }
 
-    .scroll-hint {
-      margin-top: 3.5rem;
-      font-size: 0.6rem;
-      letter-spacing: 0.45em;
-      text-transform: uppercase;
-      color: #222;
-      animation: pulse 2.5s ease-in-out infinite;
-      position: relative;
+    /* ── FORUM BANNER ── */
+    .forum-banner-wrap {
+      max-width: 1100px;
+      margin: 0 auto 1.5px;
+      padding: 0;
     }
 
-    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.9} }
+    .forum-banner {
+      background: #0d0d0f;
+      padding: 4rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      border-top: 2px solid #ecf0f1;
+      transition: background 0.3s, box-shadow 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .forum-banner:hover {
+      background: #111114;
+      box-shadow: inset 0 0 100px rgba(236,240,241,0.03);
+    }
+
+    .forum-content h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 6vw, 5rem);
+      line-height: 1;
+      color: #ecf0f1;
+      letter-spacing: 0.02em;
+    }
+
+    .forum-content p {
+      font-size: 0.85rem;
+      color: #444;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.5rem;
+    }
+
+    .forum-cta {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.2em;
+      padding: 0.8rem 2rem;
+      border: 1px solid #222;
+      color: #fff;
+      transition: all 0.3s;
+    }
+
+    .forum-banner:hover .forum-cta {
+      border-color: #ecf0f1;
+      background: #ecf0f1;
+      color: #000;
+    }
+
+    @media (max-width: 768px) {
+      .forum-banner { flex-direction: column; text-align: center; gap: 2rem; padding: 3rem 2rem; }
+    }
 
     /* ── DIVIDER ── */
     .divider {
@@ -196,9 +246,6 @@
     .card-preston .card-name { color: #f1c40f; }
     .card-preston:hover { box-shadow: inset 0 0 80px rgba(241,196,15,0.05); }
 
-    .card-forum { border-top-color: #ecf0f1; }
-    .card-forum:hover { box-shadow: inset 0 0 80px rgba(236,240,241,0.03); }
-
     /* ── FOOTER ── */
     footer {
       text-align: center;
@@ -219,10 +266,17 @@
     <p class="hero-eyebrow">Oxford, MS &nbsp;·&nbsp; Friend Group Official Archive</p>
     <h1>The Files</h1>
     <p class="hero-sub">Twelve people. Zero chill. Complete documentation.</p>
-    <p class="scroll-hint">↓ select your victim</p>
   </div>
 
-  <div class="divider"></div>
+  <div class="forum-banner-wrap">
+    <a href="forum/" class="forum-banner">
+      <div class="forum-content">
+        <h2>Message Board</h2>
+        <p>The Common Ground · Community Discussions</p>
+      </div>
+      <div class="forum-cta">Enter the Board →</div>
+    </a>
+  </div>
 
   <div class="crew-grid">
 
@@ -308,13 +362,6 @@
       <p class="card-name">Preston</p>
       <p class="card-tagline">Clash Royale Legend · Clavicular Mogger · Future ASU Frat Lord.</p>
       <p class="card-cta">View Profile →</p>
-    </a>
-
-    <a href="forum/" class="crew-card card-forum">
-      <p class="card-num">∞ &nbsp;—&nbsp; The Common Ground</p>
-      <p class="card-name" style="color: #ecf0f1;">Forum</p>
-      <p class="card-tagline">Message Board · Discussions · Beef Archive. Enter at your own risk.</p>
-      <p class="card-cta">Join the Roast →</p>
     </a>
 
   </div>
