@@ -95,7 +95,8 @@ function renderAuthArea(container, session, isReply = false, threadId = null) {
 
     const loginBtn = document.getElementById('login-btn');
     if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             _supabase.auth.signInWithOAuth({ 
                 provider: 'google',
                 options: { redirectTo: window.location.href }
@@ -105,7 +106,10 @@ function renderAuthArea(container, session, isReply = false, threadId = null) {
 
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
-        logoutBtn.addEventListener('click', () => _supabase.auth.signOut());
+        logoutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            _supabase.auth.signOut();
+        });
     }
 
     const form = document.getElementById(formId);
@@ -132,17 +136,17 @@ async function listThreads(session) {
 
     if (error) {
         console.error(error);
-        list.innerHTML = `<p style="color: #633; font-size: 0.9rem;">Failed to retrieve archives.</p>`;
+        list.innerHTML = `<p style="color: #633; font-size: 0.9rem;">Failed to retrieve archives. Error: ${error.message}</p>`;
         return;
     }
 
-    if (data.length === 0) {
+    if (!data || data.length === 0) {
         list.innerHTML = `<p style="color: #333; font-style: italic; font-size: 0.9rem; text-align: center; padding: 4rem;">The board is silent.</p>`;
         return;
     }
 
     list.innerHTML = data.map(t => `
-        <div class="thread-card" onclick="window.location.search = '?id=${t.id}'">
+        <a href="?id=${t.id}" class="thread-card" style="display: block; text-decoration: none;">
             <div class="thread-meta">
                 <div class="author-wrapper">
                     <span class="thread-author">${sanitize(t.author)}</span>
@@ -152,7 +156,7 @@ async function listThreads(session) {
             </div>
             <h2 class="thread-title">${sanitize(t.title)}</h2>
             <p class="thread-content thread-preview">${sanitize(t.content)}</p>
-        </div>
+        </a>
     `).join('');
 }
 
@@ -171,10 +175,10 @@ async function viewThread(threadId, session) {
         .from('threads')
         .select('*')
         .eq('id', threadId)
-        .single();
+        .maybeSingle();
 
     if (threadError || !thread) {
-        activeThreadContainer.innerHTML = `<p style="color: #633;">Thread not found.</p>`;
+        activeThreadContainer.innerHTML = `<p style="color: #633; padding: 2rem;">Thread not found. Error: ${threadError ? threadError.message : 'Unknown'}</p>`;
         return;
     }
 
@@ -187,8 +191,8 @@ async function viewThread(threadId, session) {
                 </div>
                 <span class="thread-date">${new Date(thread.created_at).toLocaleString()}</span>
             </div>
-            <h1 class="thread-title" style="font-size: clamp(3rem, 8vw, 6rem);">${sanitize(thread.title)}</h1>
-            <p class="thread-content" style="font-size: 1.2rem; color: #ccc;">${sanitize(thread.content).replace(/\n/g, '<br>')}</p>
+            <h1 class="thread-title" style="font-size: clamp(3rem, 8vw, 6rem); margin-top: 1rem;">${sanitize(thread.title)}</h1>
+            <p class="thread-content" style="font-size: 1.2rem; color: #ccc; margin-top: 2rem;">${sanitize(thread.content).replace(/\n/g, '<br>')}</p>
         </div>
     `;
 
@@ -200,11 +204,11 @@ async function viewThread(threadId, session) {
         .order('created_at', { ascending: true });
 
     if (repliesError) {
-        repliesList.innerHTML = `<p style="color: #633;">Failed to load replies.</p>`;
+        repliesList.innerHTML = `<p style="color: #633;">Failed to load replies: ${repliesError.message}</p>`;
         return;
     }
 
-    if (replies.length === 0) {
+    if (!replies || replies.length === 0) {
         repliesList.innerHTML = `<p style="color: #333; font-style: italic; padding: 2rem;">No replies yet. Be the first to speak.</p>`;
     } else {
         repliesList.innerHTML = `<p class="section-tag" style="margin-bottom: 2rem;">${replies.length} Replies</p>` + 
@@ -247,7 +251,7 @@ async function handleCreateThread(e, user) {
     }]);
 
     if (error) {
-        alert("Error: " + error.message);
+        alert("Submission Error: " + error.message);
         submitBtn.disabled = false;
         submitBtn.innerText = 'Create Thread';
     } else {
@@ -278,14 +282,14 @@ async function handlePostReply(e, user, threadId) {
     }]);
 
     if (error) {
-        alert("Error: " + error.message);
+        alert("Reply Error: " + error.message);
         submitBtn.disabled = false;
         submitBtn.innerText = 'Post Reply';
     } else {
         document.getElementById('reply-content').value = '';
         const guestNameInput = document.getElementById('guest-name');
         if (guestNameInput) guestNameInput.value = '';
-        viewThread(threadId, { user: user }); // Refresh view
+        viewThread(threadId, session); // Refresh view
     }
 }
 
