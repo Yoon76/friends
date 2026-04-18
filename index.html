@@ -313,5 +313,19 @@
     Official Archive &nbsp;·&nbsp; All profiles 100% accurate &nbsp;·&nbsp; No fact-checking was harmed
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Initialize Supabase even on the hub page to handle auth redirects
+    const SUPABASE_URL = 'https://sqbdiniogmxxwolckozp.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Qq32D3lzkUOGvc_5HaZMiQ_1lnmiZOZ';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    // This listener will automatically capture the session from the URL fragment (#access_token=...)
+    _supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN') {
+        console.log('Successfully signed in:', session.user.email);
+      }
+    });
+  </script>
 </body>
 </html>
