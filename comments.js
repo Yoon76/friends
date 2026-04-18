@@ -51,7 +51,7 @@ function renderLayout(container, session) {
                     <div style="background: rgba(255,255,255,0.02); padding: 3rem; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
                         <p style="color: #888; margin-bottom: 1.5rem; font-size: 0.9rem;">Sign in to prevent impersonation and join the roast.</p>
                         <button id="login-btn" style="background: #fff; color: #000; border: none; padding: 0.8rem 2rem; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: 0.1em; cursor: pointer;">
-                            Sign in with GitHub
+                            Sign in with Google
                         </button>
                     </div>
                 ` : `
@@ -77,7 +77,7 @@ function renderLayout(container, session) {
     // Attach Events
     if (!user) {
         document.getElementById('login-btn').addEventListener('click', () => {
-            _supabase.auth.signInWithOAuth({ provider: 'github' });
+            _supabase.auth.signInWithOAuth({ provider: 'google' });
         });
     } else {
         document.getElementById('logout-btn').addEventListener('click', () => _supabase.auth.signOut());
