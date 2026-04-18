@@ -50,7 +50,7 @@
 
     .hero h1 {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: clamp(5rem, 18vw, 15rem);
+      font-size: clamp(3.5rem, 15vw, 15rem);
       line-height: 0.88;
       letter-spacing: 0.03em;
       color: #fff;
@@ -89,7 +89,7 @@
     /* ── CREW GRID ── */
     .crew-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5px;
       background: #111;
       border-left: 1px solid #111;
@@ -196,10 +196,13 @@
     .card-preston .card-name { color: #f1c40f; }
     .card-preston:hover { box-shadow: inset 0 0 80px rgba(241,196,15,0.05); }
 
+    .card-forum { border-top-color: #ecf0f1; }
+    .card-forum:hover { box-shadow: inset 0 0 80px rgba(236,240,241,0.03); }
+
     /* ── FOOTER ── */
     footer {
       text-align: center;
-      padding: 5rem 2rem;
+      padding: 6rem 2rem;
       font-size: 0.6rem;
       letter-spacing: 0.35em;
       text-transform: uppercase;
@@ -305,6 +308,13 @@
       <p class="card-name">Preston</p>
       <p class="card-tagline">Clash Royale Legend · Clavicular Mogger · Future ASU Frat Lord.</p>
       <p class="card-cta">View Profile →</p>
+    </a>
+
+    <a href="forum/" class="crew-card card-forum">
+      <p class="card-num">∞ &nbsp;—&nbsp; The Common Ground</p>
+      <p class="card-name" style="color: #ecf0f1;">Forum</p>
+      <p class="card-tagline">Message Board · Discussions · Beef Archive. Enter at your own risk.</p>
+      <p class="card-cta">Join the Roast →</p>
     </a>
 
   </div>

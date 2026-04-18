@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Files — Message Board</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Bebas+Neue&display=swap');
+
+    :root {
+      --accent: #ecf0f1; /* Cloud White */
+      --black: #08080a;
+      --white: #f5f2e8;
+      --muted: #383838;
+      --nav-current: var(--accent);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── SITE NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,8,10,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1a1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a3a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.15s; }
+    .site-nav a:hover { color: #aaa; }
+    .nav-back { color: #555 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: var(--nav-current) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 5rem;
+      position: relative;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 50%, #1a1a1a 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0.5;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.65rem;
+      letter-spacing: 0.55em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3.5rem, 15vw, 10rem);
+      line-height: 0.88;
+      letter-spacing: 0.03em;
+      color: var(--accent);
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.8rem, 2vw, 1.05rem);
+      color: var(--muted);
+      margin-top: 1.75rem;
+      letter-spacing: 0.25em;
+      font-weight: 300;
+      position: relative;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+      opacity: 0.6;
+    }
+
+    /* ── AUTH AREA ── */
+    #auth-area {
+      margin-bottom: 4rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #666;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: #000;
+      border: 1px solid #222;
+      padding: 1.2rem;
+      color: #fff;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 1rem 2.5rem;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { background: #333; color: #555; cursor: not-allowed; }
+
+    /* ── THREADS LIST ── */
+    #threads-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .thread-card {
+      padding: 2.5rem;
+      background: rgba(255,255,255,0.01);
+      border-left: 2px solid #222;
+      transition: border-color 0.2s, background 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .thread-card:hover {
+      border-left-color: var(--accent);
+      background: rgba(255,255,255,0.02);
+    }
+
+    .thread-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .thread-author {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.2rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .thread-date {
+      font-size: 0.6rem;
+      color: #333;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .thread-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .thread-preview {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #888;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    footer {
+      text-align: center;
+      padding: 6rem 2rem;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: #1a1a1a;
+      border-top: 1px solid #111;
+    }
+
+    .login-wall {
+      background: rgba(255,255,255,0.02);
+      padding: 4rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      text-align: center;
+    }
+
+    .login-wall p {
+      color: #888;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    #logout-btn {
+      background: transparent;
+      border: none;
+      color: #444;
+      font-size: 0.6rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-left: 1rem;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE FILES</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+      <a href="../ahmed/">AHMED</a>
+      <a href="../latham/">LATHAM</a>
+      <a href="../dev/">DEV</a>
+      <a href="../tj/">TJ</a>
+      <a href="../mac/">MAC</a>
+      <a href="../preston/">PRESTON</a>
+      <a href="./" class="nav-current">MESSAGE BOARD</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <p class="hero-eyebrow">The Common Ground</p>
+    <h1>Message Board</h1>
+    <p class="hero-sub">Where friendships go to die. Or just to talk.</p>
+  </div>
+
+  <div class="container">
+    <section id="auth-area">
+      <!-- To be filled by forum.js -->
+    </section>
+
+    <p class="section-tag">Archive — Threads</p>
+    <div id="threads-list">
+      <p style="color: #444; font-size: 0.9rem; letter-spacing: 0.1em;">Loading the discourse...</p>
+    </div>
+  </div>
+
+  <footer>
+    Official Archive &nbsp;·&nbsp; Discourse and Debauchery
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="forum.js"></script>
+</body>
+</html>
