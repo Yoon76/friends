@@ -162,13 +162,13 @@
     .btn:disabled { background: #333; color: #555; cursor: not-allowed; }
 
     /* ── THREADS LIST ── */
-    #threads-list {
+    #threads-list, #replies-list {
       display: flex;
       flex-direction: column;
       gap: 2rem;
     }
 
-    .thread-card {
+    .thread-card, .reply-card {
       padding: 2.5rem;
       background: rgba(255,255,255,0.01);
       border-left: 2px solid #222;
@@ -180,9 +180,17 @@
     .thread-card:hover {
       border-left-color: var(--accent);
       background: rgba(255,255,255,0.02);
+      cursor: pointer;
     }
 
-    .thread-meta {
+    .reply-card {
+      padding: 1.5rem 2rem;
+      margin-left: 2rem;
+      border-left-color: #1a1a1a;
+      background: rgba(255,255,255,0.005);
+    }
+
+    .thread-meta, .reply-meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -191,14 +199,37 @@
       gap: 0.5rem;
     }
 
-    .thread-author {
+    .author-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .thread-author, .reply-author {
       font-family: 'Bebas Neue', sans-serif;
       font-size: 1.2rem;
       color: var(--accent);
       letter-spacing: 0.05em;
     }
 
-    .thread-date {
+    .badge {
+      font-size: 0.55rem;
+      padding: 0.15rem 0.4rem;
+      letter-spacing: 0.1em;
+      vertical-align: middle;
+    }
+
+    .badge.verified {
+      border: 1px solid var(--accent);
+      color: var(--accent);
+    }
+
+    .badge.unverified {
+      border: 1px solid #333;
+      color: #333;
+    }
+
+    .thread-date, .reply-date {
       font-size: 0.6rem;
       color: #333;
       letter-spacing: 0.1em;
@@ -213,15 +244,33 @@
       color: #fff;
     }
 
-    .thread-preview {
+    .thread-content, .reply-content {
       font-size: 0.95rem;
       line-height: 1.6;
       color: #888;
+    }
+
+    .thread-preview {
       display: -webkit-box;
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
+
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 2rem;
+      color: #555;
+      text-decoration: none;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover { color: var(--accent); }
+
+    .view-hidden { display: none; }
 
     footer {
       text-align: center;
@@ -287,13 +336,36 @@
   </div>
 
   <div class="container">
-    <section id="auth-area">
-      <!-- To be filled by forum.js -->
-    </section>
+    <!-- List View -->
+    <div id="list-view">
+      <section id="auth-area">
+        <!-- To be filled by forum.js -->
+      </section>
 
-    <p class="section-tag">Archive — Threads</p>
-    <div id="threads-list">
-      <p style="color: #444; font-size: 0.9rem; letter-spacing: 0.1em;">Loading the discourse...</p>
+      <p class="section-tag">Archive — Threads</p>
+      <div id="threads-list">
+        <p style="color: #444; font-size: 0.9rem; letter-spacing: 0.1em;">Loading the discourse...</p>
+      </div>
+    </div>
+
+    <!-- Thread View -->
+    <div id="thread-view" class="view-hidden">
+      <a href="./" class="back-btn" id="back-to-board">← Back to Board</a>
+      
+      <div id="active-thread">
+        <!-- Filled by forum.js -->
+      </div>
+
+      <div id="reply-area" style="margin-top: 4rem;">
+        <p class="section-tag">Join the Conversation</p>
+        <div id="reply-auth-area">
+          <!-- Filled by forum.js -->
+        </div>
+      </div>
+
+      <div id="replies-list" style="margin-top: 4rem;">
+        <!-- Filled by forum.js -->
+      </div>
     </div>
   </div>
 
