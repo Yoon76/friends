@@ -130,11 +130,11 @@ function initUI() {
     renderAlgoList();
 }
 
-window.switchTab = function(tabId) {
+window.switchTab = function(element, tabId) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     
-    event.target.classList.add('active');
+    element.classList.add('active');
     document.getElementById(`tab-${tabId}`).classList.add('active');
 
     if (tabId === 'intel') {
