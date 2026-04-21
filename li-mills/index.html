@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Li Mills — The Lima Bean</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700;900&family=Bebas+Neue&display=swap');
+
+    :root {
+      --black: #080a08;
+      --white: #f5fcf5;
+      --lima: #98fb98;
+      --lima-dim: #3d7a3d;
+      --deep: #0d0f0d;
+      --muted: #445544;
+      --nav-current: var(--lima);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'Space Grotesk', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      position: sticky;
+      top: 0;
+      z-index: 999;
+      background: rgba(8,10,8,0.97);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1a1f1a;
+      padding: 0.6rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .site-nav::-webkit-scrollbar { display: none; }
+    .site-nav a { color: #3a4a3a; text-decoration: none; font-size: 0.78rem; white-space: nowrap; transition: color 0.2s; }
+    .site-nav a:hover { color: #aaccaa; }
+    .nav-back { color: #556655 !important; }
+    .nav-friends { display: flex; gap: 1.5rem; margin-left: auto; }
+    .nav-current { color: var(--nav-current) !important; }
+
+    /* ── TICKER ── */
+    .ticker {
+      background: var(--lima);
+      padding: 0.5rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .ticker-inner {
+      display: inline-block;
+      animation: ticker 25s linear infinite;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background: radial-gradient(ellipse at 50% 40%, #1a2a1a 0%, var(--black) 70%);
+      position: relative;
+    }
+
+    .alert-banner {
+      background: #111;
+      border: 1px solid var(--lima-dim);
+      color: var(--lima);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 0.5rem 1.5rem;
+      margin-bottom: 2rem;
+      animation: blink-border 1.5s ease-in-out infinite;
+    }
+
+    @keyframes blink-border {
+      0%,100% { border-color: var(--lima-dim); }
+      50% { border-color: var(--lima); }
+    }
+
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(5rem, 18vw, 14rem);
+      line-height: 0.9;
+      color: var(--lima);
+      text-shadow: 0 0 80px rgba(152,251,152,0.2);
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      font-weight: 300;
+      color: #668866;
+      margin-top: 1.5rem;
+      letter-spacing: 0.15em;
+      font-style: italic;
+    }
+
+    .stats {
+      display: flex;
+      gap: 3rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .stat { text-align: center; }
+
+    .stat-num {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 3rem;
+      color: var(--lima);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 0.3rem;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      color: #334433;
+      text-transform: uppercase;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:.2} 50%{opacity:.8} }
+
+    /* ── SECTIONS ── */
+    section {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-tag {
+      font-size: 0.65rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--lima);
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    h2 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+      color: #aaccaa;
+    }
+
+    p {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: #668866;
+      max-width: 620px;
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--lima), transparent);
+      opacity: 0.2;
+    }
+
+    /* ── TRAIT CARDS ── */
+    .trait-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5px;
+      background: #1a2a1a;
+      border: 1px solid #1a2a1a;
+    }
+
+    .trait-card {
+      background: var(--black);
+      padding: 2rem;
+    }
+
+    .trait-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+
+    .trait-card h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.6rem;
+      color: var(--lima);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.05em;
+    }
+
+    .trait-card p {
+      font-size: 0.9rem;
+      color: #557755;
+    }
+
+    /* ── RATINGS ── */
+    .rating-bar { margin: 1rem 0; }
+
+    .rating-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #668866;
+      margin-bottom: 0.5rem;
+    }
+
+    .rating-label span { color: var(--lima); }
+
+    .bar-bg {
+      height: 4px;
+      background: #111;
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--lima-dim), var(--lima));
+      border-radius: 2px;
+    }
+    
+    /* ── QUOTES ── */
+    .quote-block {
+      margin: 2rem 0;
+      padding: 2rem 2.5rem;
+      border-left: 3px solid #3a5a3a;
+      background: var(--deep);
+    }
+
+    .quote-text {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #88aa88;
+      line-height: 1.6;
+      margin-bottom: 0.75rem;
+    }
+
+    .quote-attr {
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--lima);
+      opacity: 0.5;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 4rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: #223322;
+      border-top: 1px solid #1a2a1a;
+    }
+
+    footer span { color: var(--lima); }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a class="nav-back" href="../">← THE FILES</a>
+    <div class="nav-friends">
+      <a href="../amr/">AMR</a>
+      <a href="../ayaron/">AYARON</a>
+      <a href="../jasper/">JASPER</a>
+      <a href="../max/">MAX</a>
+      <a href="../sagan/">SAGAN</a>
+      <a href="../t-bone/">T-BONE</a>
+      <a href="../ahmed/">AHMED</a>
+      <a href="../latham/">LATHAM</a>
+      <a href="../dev/">DEV</a>
+      <a href="../tj/">TJ</a>
+      <a href="../mac/">MAC</a>
+      <a href="../preston/">PRESTON</a>
+      <a href="../li-mills/" class="nav-current">LI MILLS</a>
+      <a href="../forum/">MESSAGE BOARD</a>
+    </div>
+  </nav>
+
+  <!-- TICKER -->
+  <div class="ticker">
+    <span class="ticker-inner">
+      &nbsp;&nbsp;&nbsp;⚠ LIMA BEAN DETECTED &nbsp;·&nbsp; FUMBLE OF THE CENTURY &nbsp;·&nbsp; LOWKEY PRED ENERGY &nbsp;·&nbsp; COMPLETELY IRRELEVANT COMMENTS &nbsp;·&nbsp; LIMA BEAN DETECTED &nbsp;·&nbsp; FUMBLE OF THE CENTURY &nbsp;·&nbsp;
+    </span>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="alert-banner">⚠ &nbsp; Zero correlation imminent &nbsp; ⚠</div>
+    <h1>Li Mills</h1>
+    <p class="hero-sub">The Lima Bean &nbsp;·&nbsp; Fumble Specialist &nbsp;·&nbsp; Innocent (?) &nbsp;·&nbsp; Randomness King</p>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Fumbles</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">0</div>
+        <div class="stat-label">Correlation</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Low</div>
+        <div class="stat-label">Pred Level</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Lima Bean</div>
+      </div>
+    </div>
+
+    <p class="scroll-hint">↓ watch him fumble</p>
+  </div>
+
+  <!-- WHO IS HE -->
+  <section>
+    <p class="section-tag">01 — The Subject</p>
+    <h2>Who Is<br>Li Mills</h2>
+    <p>
+      Li Mills is a enigma wrapped in a soft, green lima bean shell. 
+      He is perhaps most famous for the "fumble of the century" — going after the same girl as AyAron and somehow managing to lose even when AyAron also fumbled. 
+      He is known for a specific type of "lowkey pred" energy, being a sophomore who decided a freshman was his primary target. 
+      Above all, Li Mills is the king of the non-sequitur; he will interrupt a serious debate about the economy to tell you about a cloud that looked like a shoe.
+    </p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- TRAIT CARDS -->
+  <section style="padding-top:5rem;padding-bottom:0">
+    <p class="section-tag">02 — Behavioral Profile</p>
+    <h2>Lima Bean<br>Dynamics</h2>
+  </section>
+
+  <div style="max-width:900px;margin:3rem auto 0;padding:0 2rem 6rem">
+    <div class="trait-grid">
+      <div class="trait-card">
+        <div class="trait-icon">🏈</div>
+        <h3>Fumble King</h3>
+        <p>Had the goal line in sight and decided to trip over his own shoelaces. AyAron was right there fumbling too, yet Li still lost.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🧒</div>
+        <h3>The Freshman Hunter</h3>
+        <p>Sophomore status, freshman ambitions. It's a specific niche that only a lima bean could occupy. Lowkey pred energy.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🎲</div>
+        <h3>Pure Randomness</h3>
+        <p>Conversations with Li are like a game of Jenga played with wet noodles. Nothing connects, nothing makes sense, but it's happening.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">🌱</div>
+        <h3>The Lima Bean</h3>
+        <p>Look at him. He is small, green-coded, and innocent. A literal lima bean in a human suit. We cannot explain it.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">😇</div>
+        <h3>The Innocence Act</h3>
+        <p>Claims to be a good boy. We know the truth. The pred energy is masked by the soft green glow of innocence.</p>
+      </div>
+      <div class="trait-card">
+        <div class="trait-icon">❓</div>
+        <h3>Zero Correlation</h3>
+        <p>If the topic is X, Li will talk about Purple. If the topic is Y, Li will ask if you like crackers. It's consistent inconsistency.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WITNESSES -->
+  <section>
+    <p class="section-tag">03 — Incident Reports</p>
+    <h2>Voices from<br>the Field</h2>
+
+    <div class="quote-block">
+      <p class="quote-text">"He just looked at the girl and... I don't know. It was like watching a slow-motion car crash where the car was a lima bean."</p>
+      <p class="quote-attr">— Anonymous Witness</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"We were talking about Calculus and he asked if I knew where to buy a custom cape. I still don't have an answer."</p>
+      <p class="quote-attr">— Frustrated Classmate</p>
+    </div>
+
+    <div class="quote-block">
+      <p class="quote-text">"AyAron fumbled, but Li? Li fumbled the fumble. It was inception-level fumbling."</p>
+      <p class="quote-attr">— The Crew Archive</p>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- RATINGS -->
+  <section>
+    <p class="section-tag">04 — The Scorecard</p>
+    <h2>Li Mills<br>By The Numbers</h2>
+
+    <div style="margin-top:2rem;max-width:500px">
+      <div class="rating-bar">
+        <div class="rating-label">Fumble Consistency <span>100</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Social Correlation <span>0</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:0%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Lima Bean Energy <span>99</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:99%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Freshman Fixation <span>High</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:92%"></div></div>
+      </div>
+      <div class="rating-bar">
+        <div class="rating-label">Innocence <span>Suspect</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width:100%"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>Dedicated to <span>Li Mills</span> — the lima bean king.</p>
+    <p style="margin-top:0.5rem;color:#1a1f1a">Official Archive of THE FILES.</p>
+  </footer>
+
+  <div id="comments-container"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../comments.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      initComments('li-mills');
+    });
+  </script>
+</body>
+</html>
