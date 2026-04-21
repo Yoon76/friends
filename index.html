@@ -128,6 +128,116 @@
       .forum-banner { flex-direction: column; text-align: center; gap: 2rem; padding: 3rem 2rem; }
     }
 
+    /* ── LEADERBOARD ── */
+    .lb-wrap {
+        max-width: 1100px;
+        margin: 0 auto 1.5px;
+        background: #0d0d0f;
+        padding: 2rem 3rem;
+    }
+    
+    .lb-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 2rem;
+    }
+    
+    .lb-header h3 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 2rem;
+        color: #fff;
+        letter-spacing: 0.05em;
+    }
+    
+    .lb-header span {
+        font-size: 0.65rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: #444;
+    }
+
+    .leaderboard-container {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        padding-bottom: 1rem;
+        scrollbar-width: thin;
+        scrollbar-color: #222 transparent;
+    }
+    
+    .leaderboard-container::-webkit-scrollbar { height: 4px; }
+    .leaderboard-container::-webkit-scrollbar-thumb { background: #222; }
+
+    .leaderboard-item {
+        flex: 0 0 200px;
+        background: #08080a;
+        border: 1px solid #1a1a1a;
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        position: relative;
+        transition: border-color 0.2s;
+    }
+    
+    .leaderboard-item:hover { border-color: #333; }
+    
+    .leaderboard-item.top-dog {
+        border-color: #f1c40f33;
+        background: linear-gradient(180deg, #08080a 0%, #1a1a0d 100%);
+    }
+    
+    .lb-rank {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 0.8rem;
+        color: #444;
+        letter-spacing: 0.1em;
+    }
+    
+    .lb-info {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .lb-name {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.8rem;
+        line-height: 1;
+        color: #fff;
+    }
+    
+    .lb-votes {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+    
+    .lb-vote-btn {
+        background: transparent;
+        border: 1px solid #222;
+        color: #888;
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 0.9rem;
+        padding: 0.4rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        letter-spacing: 0.1em;
+    }
+    
+    .lb-vote-btn:hover {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+    
+    .top-dog .lb-vote-btn:hover {
+        background: #f1c40f;
+        border-color: #f1c40f;
+    }
+
     /* ── DIVIDER ── */
     .divider {
       height: 1px;
@@ -286,6 +396,16 @@
     </a>
   </div>
 
+  <div class="lb-wrap">
+    <div class="lb-header">
+        <h3>Aura Intel</h3>
+        <span>Real-time Mog Leaderboard</span>
+    </div>
+    <div class="leaderboard-container" id="leaderboard-list">
+        <!-- Filled by leaderboard.js -->
+    </div>
+  </div>
+
   <div class="crew-grid">
 
     <a href="amr/" class="crew-card card-amr">
@@ -380,9 +500,9 @@
     </a>
 
     <a href="javier/" class="crew-card card-javier">
-      <p class="card-num">14 &nbsp;—&nbsp; The Unc</p>
+      <p class="card-num">14 &nbsp;—&nbsp; Unc</p>
       <p class="card-name">Javier</p>
-      <p class="card-tagline">White Monster Addict · Agartha Truth Seeker · The Mustache of Wisdom.</p>
+      <p class="card-tagline">White Monster Addict · Agartha Expert · The Mustache Legend.</p>
       <p class="card-cta">View Profile →</p>
     </a>
 
@@ -393,6 +513,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="leaderboard.js"></script>
   <script>
     // Initialize Supabase even on the hub page to handle auth redirects
     const SUPABASE_URL = 'https://sqbdiniogmxxwolckozp.supabase.co';
