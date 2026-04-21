@@ -80,13 +80,22 @@ async function init() {
     currentUser = session.user;
     currentName = currentUser.user_metadata?.full_name || currentUser.email || 'Trader';
 
-    // Load Local Data
-    const savedData = localStorage.getItem(`beef_portfolio_v3_${currentUser.id}`);
+    // Load Local Data (with fallback to previous versions so data isn't lost)
+    const baseKey = `beef_portfolio_${currentUser.id}`;
+    const savedData = localStorage.getItem(baseKey) || 
+                      localStorage.getItem(`beef_portfolio_v3_${currentUser.id}`) || 
+                      localStorage.getItem(`beef_portfolio_v2_${currentUser.id}`) ||
+                      localStorage.getItem(`beef_portfolio_v1_${currentUser.id}`);
+                      
     if (savedData) {
-        const parsed = JSON.parse(savedData);
-        portfolio.cash = parsed.cash;
-        portfolio.holdings = parsed.holdings || {};
-        algoRules = parsed.algoRules || [];
+        try {
+            const parsed = JSON.parse(savedData);
+            portfolio.cash = parsed.cash !== undefined ? parsed.cash : 1000.00;
+            portfolio.holdings = parsed.holdings || {};
+            algoRules = parsed.algoRules || [];
+        } catch (e) {
+            console.error('Failed to parse portfolio data', e);
+        }
     }
 
     // Init Prices & History
@@ -376,7 +385,7 @@ function renderPortfolio() {
 
 function saveData() {
     if (currentUser) {
-        localStorage.setItem(`beef_portfolio_v3_${currentUser.id}`, JSON.stringify({
+        localStorage.setItem(`beef_portfolio_${currentUser.id}`, JSON.stringify({
             cash: portfolio.cash,
             holdings: portfolio.holdings,
             algoRules: algoRules
