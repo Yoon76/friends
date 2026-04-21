@@ -4,7 +4,12 @@ const SUPABASE_KEY = 'sb_publishable_Qq32D3lzkUOGvc_5HaZMiQ_1lnmiZOZ';
 const { createClient } = supabase;
 const _supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Market State
+function sanitize(str) {
+    if (!str) return '';
+    const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;', "/": '&#x2F;'};
+    return String(str).replace(/[&<>"'/]/ig, m => map[m]).trim();
+}
+
 let currentUser = null;
 let currentName = 'Anonymous Trader';
 
@@ -13,30 +18,29 @@ let portfolio = {
     holdings: {}
 };
 
-// Core Assets
+// Core Assets (drastic changes, low frequency)
 const STOCKS = [
-    { ticker: 'AMR', name: 'Amr', price: 100, vol: 0.02, color: '#ff003c' },
-    { ticker: 'AYRN', name: 'AyAron', price: 150, vol: 0.05, color: '#00ff41' },
-    { ticker: 'JSPR', name: 'Jasper', price: 50, vol: 0.15, color: '#00d2ff' },
-    { ticker: 'MAX', name: 'Max', price: 120, vol: 0.03, color: '#f1c40f' },
-    { ticker: 'SGN', name: 'Sagan', price: 80, vol: 0.08, color: '#9b59b6' },
-    { ticker: 'TBN', name: 'T-Bone', price: 90, vol: 0.06, color: '#e67e22' },
-    { ticker: 'AHMD', name: 'Ahmed', price: 200, vol: 0.04, color: '#1abc9c' },
-    { ticker: 'LTHM', name: 'Latham', price: 40, vol: 0.12, color: '#34495e' },
-    { ticker: 'DEV', name: 'Dev', price: 65, vol: 0.10, color: '#e74c3c' },
-    { ticker: 'TJ', name: 'TJ', price: 46, vol: 0.14, color: '#2ecc71' },
-    { ticker: 'MAC', name: 'Mac', price: 250, vol: 0.03, color: '#3498db' },
-    { ticker: 'PRST', name: 'Preston', price: 300, vol: 0.05, color: '#f39c12' },
-    { ticker: 'LI', name: 'Li Mills', price: 75, vol: 0.18, color: '#8e44ad' },
-    { ticker: 'JVR', name: 'Javier', price: 110, vol: 0.07, color: '#d35400' },
-    { ticker: 'SAM', name: 'Sam Bradley', price: 180, vol: 0.06, color: '#16a085' }
+    { ticker: 'AMR', name: 'Amr', price: 100, vol: 0.15, color: '#ff4757' },
+    { ticker: 'AYRN', name: 'AyAron', price: 150, vol: 0.10, color: '#2ed573' },
+    { ticker: 'JSPR', name: 'Jasper', price: 50, vol: 0.35, color: '#1e90ff' }, // High vol bum
+    { ticker: 'MAX', name: 'Max', price: 120, vol: 0.12, color: '#ffa502' },
+    { ticker: 'SGN', name: 'Sagan', price: 80, vol: 0.20, color: '#9b59b6' },
+    { ticker: 'TBN', name: 'T-Bone', price: 90, vol: 0.18, color: '#1abc9c' },
+    { ticker: 'AHMD', name: 'Ahmed', price: 200, vol: 0.10, color: '#ff7f50' },
+    { ticker: 'LTHM', name: 'Latham', price: 40, vol: 0.30, color: '#34495e' }, // High vol bum
+    { ticker: 'DEV', name: 'Dev', price: 65, vol: 0.25, color: '#ff6348' },
+    { ticker: 'TJ', name: 'TJ', price: 46, vol: 0.32, color: '#7bed9f' },
+    { ticker: 'MAC', name: 'Mac', price: 250, vol: 0.08, color: '#70a1ff' },
+    { ticker: 'PRST', name: 'Preston', price: 300, vol: 0.15, color: '#eccc68' },
+    { ticker: 'LI', name: 'Li Mills', price: 75, vol: 0.28, color: '#9c88ff' },
+    { ticker: 'JVR', name: 'Javier', price: 110, vol: 0.15, color: '#d35400' },
+    { ticker: 'SAM', name: 'Sam Bradley', price: 180, vol: 0.12, color: '#2ed573' }
 ];
 
-// Composite Assets (Index Funds)
 const INDEX_FUNDS = [
-    { ticker: 'FRSH', name: 'Freshman ETF', components: ['AHMD', 'LI'], desc: 'Ahmed + Li', color: '#ff00ff' },
-    { ticker: 'SHNGN', name: 'Shenanigan Index', components: ['LI', 'SAM'], desc: 'Li + Sam', color: '#ffff00' },
-    { ticker: 'ROYAL', name: 'Clavicular Trust', components: ['PRST', 'JVR'], desc: 'Preston + Javier', color: '#00ffff' }
+    { ticker: 'FRSH', name: 'Freshman ETF', components: ['AHMD', 'LI'], color: '#ff4757' },
+    { ticker: 'SHNGN', name: 'Shenanigan Index', components: ['LI', 'SAM'], color: '#eccc68' },
+    { ticker: 'ROYAL', name: 'Clavicular Trust', components: ['PRST', 'JVR'], color: '#70a1ff' }
 ];
 
 const ALL_ASSETS = [...STOCKS, ...INDEX_FUNDS];
@@ -44,22 +48,91 @@ const ALL_ASSETS = [...STOCKS, ...INDEX_FUNDS];
 let marketPrices = {};
 let previousPrices = {};
 let priceHistory = {}; 
-const MAX_HISTORY = 60;
+const MAX_HISTORY = 30; // Shorter history for clearer visual impact
+let currentSelectedAsset = null;
 
-let algoRules = [];
-
-const NEWS_EVENTS = [
-    { text: "BREAKING: Li Mills and AyAron double-fumble.", impacts: { 'LI': -0.3, 'AYRN': -0.2 } },
-    { text: "BREAKING: Mac hits 500-day Duolingo streak.", impacts: { 'MAC': 0.2 } },
-    { text: "BREAKING: Preston searches bomb instructions.", impacts: { 'PRST': -0.4 } },
-    { text: "BREAKING: Sam Bradley claims ankles.", impacts: { 'SAM': 0.3 } },
-    { text: "BREAKING: Javier proves Agartha.", impacts: { 'JVR': 0.3 } },
-    { text: "BREAKING: Ahmed spotted near sophomore.", impacts: { 'AHMD': 0.2 } },
-    { text: "BREAKING: Jasper caught lying about height.", impacts: { 'JSPR': -0.3 } }
-];
-
-// Chart Instance
 let priceChart = null;
+
+// Deterministic PRNG
+function seededRandom(seed) {
+    let x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+}
+
+// O(1) Global Deterministic Market Algorithm
+function computeMarketData() {
+    const now = Date.now();
+    const TICK_INTERVAL = 10000; // 10 seconds -> 6 updates per minute
+    const startOfTime = 1700000000000; // Arbitrary global epoch
+    
+    const currentTick = Math.floor((now - startOfTime) / TICK_INTERVAL);
+    const startTick = currentTick - MAX_HISTORY;
+    
+    let currentP = {};
+    let prevP = {};
+    let hist = {};
+    
+    STOCKS.forEach((s, s_idx) => {
+        hist[s.ticker] = [];
+        
+        for (let i = 0; i <= MAX_HISTORY; i++) {
+            const T = startTick + i;
+            const seed1 = T + s_idx * 100;
+            const seed2 = T * 2 + s_idx * 200;
+            
+            // Base price algorithm (O(1) continuous state)
+            // Long wave (trend) + Short wave (fluctuations) + PRNG noise
+            const trend = Math.sin(T / 60 + s_idx) * 0.35; // +/- 35%
+            const fast = Math.sin(T / 8 + s_idx * 5) * 0.15; // +/- 15%
+            const noise = (seededRandom(seed1) * 2 - 1) * s.vol; // Volatility noise
+            
+            // Random drastic spikes (can save bums or crash gods)
+            let spike = 0;
+            if (seededRandom(seed2) > 0.95) {
+                spike = (seededRandom(seed2 + 1) * 2 - 1) * 0.6; // up to +/- 60% massive swing
+            }
+            
+            const totalChange = trend + fast + noise + spike;
+            const tickPrice = Math.max(1, s.price * (1 + totalChange)); // Floor at $1
+            
+            hist[s.ticker].push(tickPrice);
+            
+            if (i === MAX_HISTORY - 1) prevP[s.ticker] = tickPrice;
+            if (i === MAX_HISTORY) currentP[s.ticker] = tickPrice;
+        }
+    });
+
+    INDEX_FUNDS.forEach(f => {
+        hist[f.ticker] = [];
+        for (let j = 0; j <= MAX_HISTORY; j++) {
+            let sum = 0;
+            f.components.forEach(c => sum += hist[c][j]);
+            hist[f.ticker].push(sum / f.components.length);
+        }
+        currentP[f.ticker] = hist[f.ticker][MAX_HISTORY];
+        prevP[f.ticker] = hist[f.ticker][MAX_HISTORY - 1] || currentP[f.ticker];
+    });
+
+    return { 
+        currentP, prevP, hist, 
+        nextTickMs: TICK_INTERVAL - (now % TICK_INTERVAL) 
+    };
+}
+
+function triggerMarketUpdate() {
+    const data = computeMarketData();
+    marketPrices = data.currentP;
+    previousPrices = data.prevP;
+    priceHistory = data.hist;
+    
+    renderAssetList();
+    if (currentSelectedAsset) renderMainView();
+    renderPortfolio();
+    updateChartData();
+    
+    // Schedule next exact tick
+    setTimeout(triggerMarketUpdate, data.nextTickMs);
+}
 
 async function init() {
     let { data: { session } } = await _supabase.auth.getSession();
@@ -80,43 +153,33 @@ async function init() {
     currentUser = session.user;
     currentName = currentUser.user_metadata?.full_name || currentUser.email || 'Trader';
 
-    // Load Local Data (with fallback to previous versions so data isn't lost)
-    const baseKey = `beef_portfolio_${currentUser.id}`;
+    // Load Local Data (with fallback)
+    const baseKey = `beef_global_portfolio_${currentUser.id}`;
     const savedData = localStorage.getItem(baseKey) || 
                       localStorage.getItem(`beef_portfolio_v3_${currentUser.id}`) || 
-                      localStorage.getItem(`beef_portfolio_v2_${currentUser.id}`) ||
-                      localStorage.getItem(`beef_portfolio_v1_${currentUser.id}`);
+                      localStorage.getItem(`beef_portfolio_${currentUser.id}`);
                       
     if (savedData) {
         try {
             const parsed = JSON.parse(savedData);
             portfolio.cash = parsed.cash !== undefined ? parsed.cash : 1000.00;
             portfolio.holdings = parsed.holdings || {};
-            algoRules = parsed.algoRules || [];
-        } catch (e) {
-            console.error('Failed to parse portfolio data', e);
-        }
+        } catch (e) {}
     }
 
-    // Init Prices & History
-    STOCKS.forEach(s => {
-        marketPrices[s.ticker] = s.price;
-        previousPrices[s.ticker] = s.price;
-        priceHistory[s.ticker] = Array(MAX_HISTORY).fill(s.price);
-        if (portfolio.holdings[s.ticker] === undefined) portfolio.holdings[s.ticker] = 0;
-    });
-    INDEX_FUNDS.forEach(f => {
-        let sum = 0;
-        f.components.forEach(c => sum += marketPrices[c]);
-        let price = sum / f.components.length;
-        marketPrices[f.ticker] = price;
-        previousPrices[f.ticker] = price;
-        priceHistory[f.ticker] = Array(MAX_HISTORY).fill(price);
-        if (portfolio.holdings[f.ticker] === undefined) portfolio.holdings[f.ticker] = 0;
-    });
+    // Initial Data Sync
+    const data = computeMarketData();
+    marketPrices = data.currentP;
+    previousPrices = data.prevP;
+    priceHistory = data.hist;
 
-    initUI();
-    startMarketSimulation();
+    initChart();
+    renderAssetList();
+    renderPortfolio();
+    updateChartData();
+
+    // Start Engine
+    setTimeout(triggerMarketUpdate, data.nextTickMs);
     
     syncNetWorth();
     fetchLeaderboard();
@@ -128,205 +191,8 @@ async function init() {
         }).subscribe();
 }
 
-function initUI() {
-    const algoSel = document.getElementById('algo-asset');
-    let optionsHtml = ALL_ASSETS.map(a => `<option value="${a.ticker}">${a.name} ($${a.ticker})</option>`).join('');
-    if (algoSel) algoSel.innerHTML = optionsHtml;
-
-    initChart();
-    renderMarket();
-    renderPortfolio();
-    renderAlgoList();
-}
-
-function startMarketSimulation() {
-    setInterval(() => {
-        // Core Stocks
-        STOCKS.forEach(s => {
-            previousPrices[s.ticker] = marketPrices[s.ticker];
-            const change = 1 + ((Math.random() * 2 - 1) * s.vol);
-            marketPrices[s.ticker] = Math.max(1, marketPrices[s.ticker] * change);
-        });
-
-        // Index Funds
-        INDEX_FUNDS.forEach(f => {
-            previousPrices[f.ticker] = marketPrices[f.ticker];
-            let sum = 0;
-            f.components.forEach(c => sum += marketPrices[c]);
-            marketPrices[f.ticker] = sum / f.components.length;
-        });
-
-        // Record History
-        Object.keys(marketPrices).forEach(ticker => {
-            priceHistory[ticker].push(marketPrices[ticker]);
-            if (priceHistory[ticker].length > MAX_HISTORY) priceHistory[ticker].shift();
-        });
-
-        runAlgos();
-        renderMarket();
-        renderPortfolio();
-        updateChartData();
-        
-    }, 2000);
-
-    // News Events
-    setInterval(() => {
-        const event = NEWS_EVENTS[Math.floor(Math.random() * NEWS_EVENTS.length)];
-        const marquee = document.getElementById('news-marquee');
-        if (marquee) marquee.innerText = event.text;
-
-        for (const [ticker, impact] of Object.entries(event.impacts)) {
-            marketPrices[ticker] = Math.max(1, marketPrices[ticker] * (1 + impact));
-        }
-    }, 15000);
-}
-
-// ALGORITHMIC TRADING
-window.addAlgoRule = function() {
-    const asset = document.getElementById('algo-asset').value;
-    const cond = document.getElementById('algo-condition').value;
-    const price = parseFloat(document.getElementById('algo-price').value);
-    const action = document.getElementById('algo-action').value;
-    const qty = parseInt(document.getElementById('algo-qty').value);
-
-    if (isNaN(price) || isNaN(qty) || qty <= 0) return alert("Invalid numbers");
-
-    algoRules.push({ id: Date.now(), asset, condition, price, action, qty });
-    saveData();
-    renderAlgoList();
-}
-
-window.removeAlgoRule = function(id) {
-    algoRules = algoRules.filter(r => r.id !== id);
-    saveData();
-    renderAlgoList();
-}
-
-function renderAlgoList() {
-    const list = document.getElementById('algo-list');
-    if (!list) return;
-    
-    if (algoRules.length === 0) {
-        list.innerHTML = '<div style="color: #444; font-size: 0.8rem; text-align: center; padding: 1rem;">No active algorithms.</div>';
-        return;
-    }
-
-    list.innerHTML = algoRules.map(r => `
-        <div class="algo-item">
-            <div>
-                <strong>IF</strong> $${r.asset} 
-                ${r.condition === 'drops_below' ? '<span class="down">↓ drops below</span>' : '<span class="up">↑ goes above</span>'} 
-                $${r.price} 
-                <strong>THEN</strong> <span class="${r.action === 'buy' ? 'up' : 'down'}">${r.action.toUpperCase()}</span> ${r.qty}
-            </div>
-            <button class="btn btn-sell" style="padding: 0.1rem 0.4rem; font-size:0.6rem;" onclick="removeAlgoRule(${r.id})">X</button>
-        </div>
-    `).join('');
-}
-
-function runAlgos() {
-    let triggered = false;
-    algoRules.forEach(rule => {
-        const currentPrice = marketPrices[rule.asset];
-        let conditionMet = false;
-        
-        if (rule.condition === 'drops_below' && currentPrice < rule.price) conditionMet = true;
-        if (rule.condition === 'goes_above' && currentPrice > rule.price) conditionMet = true;
-
-        if (conditionMet) {
-            if (rule.action === 'buy' && portfolio.cash >= currentPrice * rule.qty) {
-                portfolio.cash -= currentPrice * rule.qty;
-                portfolio.holdings[rule.asset] += rule.qty;
-                triggered = true;
-            } else if (rule.action === 'sell' && portfolio.holdings[rule.asset] >= rule.qty) {
-                portfolio.cash += currentPrice * rule.qty;
-                portfolio.holdings[rule.asset] -= rule.qty;
-                triggered = true;
-            }
-        }
-    });
-
-    if (triggered) saveData();
-}
-
-// CHARTS
-function initChart() {
-    const ctx = document.getElementById('priceChart');
-    if (!ctx) return;
-
-    const datasets = ALL_ASSETS.map(asset => ({
-        label: asset.ticker,
-        data: priceHistory[asset.ticker],
-        borderColor: asset.color,
-        backgroundColor: asset.color + '33', // 20% opacity
-        borderWidth: 2,
-        pointRadius: 0,
-        fill: false,
-        tension: 0.1
-    }));
-
-    priceChart = new Chart(ctx.getContext('2d'), {
-        type: 'line',
-        data: {
-            labels: Array(MAX_HISTORY).fill(''),
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: false,
-            plugins: { 
-                legend: { 
-                    display: true, 
-                    position: 'bottom',
-                    labels: { color: '#e0e0e0', font: { size: 10 } }
-                } 
-            },
-            scales: {
-                y: { grid: { color: '#222' }, ticks: { color: '#666' } },
-                x: { grid: { display: false } }
-            },
-            interaction: {
-                mode: 'nearest',
-                axis: 'x',
-                intersect: false
-            }
-        }
-    });
-}
-
-window.updateChartConfig = function() {
-    if (!priceChart) return;
-    const type = document.getElementById('chart-type').value;
-    priceChart.config.type = type;
-    
-    // Adjust fill for bar charts to look better
-    priceChart.data.datasets.forEach(ds => {
-        if (type === 'bar') {
-            ds.backgroundColor = ds.borderColor + '88'; // more opaque for bars
-            ds.borderWidth = 1;
-        } else {
-            ds.backgroundColor = ds.borderColor + '33'; 
-            ds.borderWidth = 2;
-            ds.fill = false;
-        }
-    });
-    
-    priceChart.update();
-}
-
-function updateChartData() {
-    if (!priceChart) return;
-    
-    ALL_ASSETS.forEach((asset, i) => {
-        priceChart.data.datasets[i].data = priceHistory[asset.ticker];
-    });
-    priceChart.update();
-}
-
-// RENDERING
-function renderMarket() {
-    const list = document.getElementById('stock-list');
+function renderAssetList() {
+    const list = document.getElementById('asset-list');
     if (!list) return;
     
     list.innerHTML = ALL_ASSETS.map(s => {
@@ -334,87 +200,100 @@ function renderMarket() {
         const prev = previousPrices[s.ticker];
         const isUp = current >= prev;
         const changeClass = isUp ? 'up' : 'down';
-        const changeSymbol = isUp ? '▲' : '▼';
-        const isIndex = INDEX_FUNDS.find(f => f.ticker === s.ticker);
+        const changePct = Math.abs(((current - prev)/prev)*100).toFixed(1);
+        const sign = isUp ? '+' : '-';
         
+        const isActive = currentSelectedAsset === s.ticker ? 'active' : '';
+
         return `
-            <div class="stock-row ${isIndex ? 'index-fund' : ''}">
-                <div>
-                    <div class="stock-name">${s.name} ${isIndex ? '<span style="font-size:0.6rem;color:#00d2ff;vertical-align:top;">ETF</span>' : ''}</div>
-                    <div class="stock-ticker" style="color: ${s.color};">$${s.ticker}</div>
+            <div class="asset-item ${isActive}" onclick="selectAsset('${s.ticker}')">
+                <div class="asset-info">
+                    <div class="asset-name" style="color: ${s.color};">${s.name}</div>
+                    <div class="asset-ticker">${s.ticker}</div>
                 </div>
-                <div class="stock-price">$${current.toFixed(2)}</div>
-                <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(((current - prev)/prev)*100).toFixed(1)}%</div>
-                <div class="actions">
-                    <button class="btn btn-sell" onclick="sell('${s.ticker}')" ${portfolio.holdings[s.ticker] <= 0 ? 'disabled' : ''}>S</button>
-                    <button class="btn btn-buy" onclick="buy('${s.ticker}')" ${portfolio.cash < current ? 'disabled' : ''}>B</button>
+                <div class="asset-price-box">
+                    <div class="asset-price">$${current.toFixed(2)}</div>
+                    <div class="asset-change ${changeClass}">${sign}${changePct}%</div>
                 </div>
             </div>
         `;
     }).join('');
 }
 
+window.selectAsset = function(ticker) {
+    currentSelectedAsset = ticker;
+    renderAssetList();
+    renderMainView();
+}
+
+function renderMainView() {
+    const asset = ALL_ASSETS.find(a => a.ticker === currentSelectedAsset);
+    if (!asset) return;
+
+    const current = marketPrices[asset.ticker];
+    const prev = previousPrices[asset.ticker];
+    const isUp = current >= prev;
+    const changeClass = isUp ? 'up' : 'down';
+    const changePct = Math.abs(((current - prev)/prev)*100).toFixed(1);
+    const sign = isUp ? '+' : '-';
+
+    document.getElementById('main-name').innerHTML = `<span style="color:${asset.color};">${asset.name}</span>`;
+    document.getElementById('main-price').innerText = `$${current.toFixed(2)}`;
+    
+    const changeEl = document.getElementById('main-change');
+    changeEl.innerText = `${sign}${changePct}% (Current Tick)`;
+    changeEl.className = `main-change ${changeClass}`;
+
+    document.getElementById('trade-section').style.display = 'flex';
+    const qty = portfolio.holdings[asset.ticker] || 0;
+    const val = qty * current;
+    document.getElementById('pos-shares').innerText = `${qty} Shares Held`;
+    document.getElementById('pos-value').innerText = `Value: $${val.toFixed(2)}`;
+
+    document.getElementById('btn-buy').disabled = portfolio.cash < current;
+    document.getElementById('btn-sell').disabled = qty <= 0;
+}
+
+window.tradeSelected = function(action) {
+    const ticker = currentSelectedAsset;
+    const price = marketPrices[ticker];
+    
+    if (action === 'buy' && portfolio.cash >= price) {
+        portfolio.cash -= price;
+        portfolio.holdings[ticker] = (portfolio.holdings[ticker] || 0) + 1;
+    } else if (action === 'sell' && (portfolio.holdings[ticker] || 0) > 0) {
+        portfolio.holdings[ticker] -= 1;
+        portfolio.cash += price;
+    }
+    
+    saveData();
+    renderMainView();
+    renderPortfolio();
+}
+
 function renderPortfolio() {
     let netWorth = portfolio.cash;
-    let holdingsHtml = '';
-
     ALL_ASSETS.forEach(s => {
         const qty = portfolio.holdings[s.ticker] || 0;
-        if (qty > 0) {
-            const value = qty * marketPrices[s.ticker];
-            netWorth += value;
-            holdingsHtml += `
-                <div class="holding-item">
-                    <span>${qty}x <span style="color:${s.color}">$${s.ticker}</span></span>
-                    <span>$${value.toFixed(2)}</span>
-                </div>
-            `;
-        }
+        if (qty > 0) netWorth += qty * marketPrices[s.ticker];
     });
 
     const nwDisplay = document.getElementById('net-worth-display');
     const cashDisplay = document.getElementById('cash-display');
-    const hList = document.getElementById('holdings-list');
-
     if (nwDisplay) nwDisplay.innerText = `$${netWorth.toFixed(2)}`;
-    if (cashDisplay) cashDisplay.innerText = `Liquid: $${portfolio.cash.toFixed(2)}`;
-    if (hList) hList.innerHTML = holdingsHtml || '<div style="color: #444; font-size: 0.8rem; text-align: center;">No open positions.</div>';
-    
+    if (cashDisplay) cashDisplay.innerText = `Buying Power: $${portfolio.cash.toFixed(2)}`;
     saveData();
 }
 
 function saveData() {
     if (currentUser) {
-        localStorage.setItem(`beef_portfolio_${currentUser.id}`, JSON.stringify({
+        localStorage.setItem(`beef_global_portfolio_${currentUser.id}`, JSON.stringify({
             cash: portfolio.cash,
-            holdings: portfolio.holdings,
-            algoRules: algoRules
+            holdings: portfolio.holdings
         }));
     }
 }
 
-// TRADING ACTIONS
-window.buy = function(ticker) {
-    const price = marketPrices[ticker];
-    if (portfolio.cash >= price) {
-        portfolio.cash -= price;
-        portfolio.holdings[ticker] += 1;
-        renderMarket();
-        renderPortfolio();
-    }
-};
-
-window.sell = function(ticker) {
-    const price = marketPrices[ticker];
-    if (portfolio.holdings[ticker] > 0) {
-        portfolio.holdings[ticker] -= 1;
-        portfolio.cash += price;
-        renderMarket();
-        renderPortfolio();
-    }
-};
-
-// LEADERBOARD
 async function syncNetWorth() {
     if (!currentUser) return;
     let netWorth = portfolio.cash;
@@ -437,9 +316,133 @@ async function fetchLeaderboard() {
     list.innerHTML = data.map((p, i) => `
         <div class="lb-row ${i === 0 ? 'top' : ''}">
             <span class="lb-name">#${i + 1} ${sanitize(p.name)}</span>
-            <span style="color: var(--green); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;">$${parseFloat(p.net_worth).toFixed(2)}</span>
+            <span class="lb-net" style="color: var(--accent);">$${parseFloat(p.net_worth).toFixed(2)}</span>
         </div>
     `).join('');
+}
+
+// Global Charts Setup
+function initChart() {
+    const ctx = document.getElementById('priceChart');
+    if (!ctx) return;
+
+    // Display all assets by default as multiple lines
+    const datasets = ALL_ASSETS.map(asset => ({
+        label: asset.ticker,
+        data: priceHistory[asset.ticker],
+        borderColor: asset.color,
+        backgroundColor: asset.color + '44', // slightly transparent
+        borderWidth: 2,
+        pointRadius: 0,
+        fill: false,
+        tension: 0.1,
+        hidden: false // all visible by default
+    }));
+
+    priceChart = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: Array(MAX_HISTORY + 1).fill(''),
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 500 }, // smooth transitions for updates
+            plugins: { 
+                legend: { 
+                    display: true, 
+                    position: 'bottom',
+                    labels: { color: '#888', boxWidth: 10, padding: 8 }
+                },
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
+                }
+            },
+            scales: {
+                y: { grid: { color: '#222' }, ticks: { color: '#888', font: { family: 'Space Mono' } } },
+                x: { grid: { display: false } }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
+            }
+        }
+    });
+}
+
+window.changeChartType = function() {
+    if (!priceChart) return;
+    const type = document.getElementById('global-chart-type').value;
+    
+    if (type === 'doughnut') {
+        // Doughnut requires single points. We map the LATEST price.
+        const currentData = ALL_ASSETS.map(a => marketPrices[a.ticker]);
+        const bgColors = ALL_ASSETS.map(a => a.color);
+        
+        priceChart.config.type = 'doughnut';
+        priceChart.data = {
+            labels: ALL_ASSETS.map(a => a.ticker),
+            datasets: [{
+                data: currentData,
+                backgroundColor: bgColors,
+                borderWidth: 0
+            }]
+        };
+    } else {
+        // Reset to time series
+        const datasets = ALL_ASSETS.map(asset => ({
+            label: asset.ticker,
+            data: priceHistory[asset.ticker],
+            borderColor: asset.color,
+            backgroundColor: asset.color + '44',
+            borderWidth: type === 'radar' ? 1 : 2,
+            pointRadius: type === 'radar' ? 2 : 0,
+            fill: type === 'radar' || type === 'bar',
+            tension: 0.1,
+            hidden: false
+        }));
+
+        priceChart.config.type = type;
+        priceChart.data = {
+            labels: Array(MAX_HISTORY + 1).fill(''),
+            datasets: datasets
+        };
+    }
+    
+    priceChart.update();
+}
+
+window.toggleAllAssets = function() {
+    if (!priceChart) return;
+    
+    const type = document.getElementById('global-chart-type').value;
+    if (type === 'doughnut') return; // Cannot toggle lines on doughnut
+    
+    const isAnyVisible = priceChart.data.datasets.some(ds => !ds.hidden);
+    
+    priceChart.data.datasets.forEach(ds => {
+        ds.hidden = isAnyVisible; // Toggle all off if any are on
+    });
+    priceChart.update();
+}
+
+function updateChartData() {
+    if (!priceChart) return;
+    
+    const type = document.getElementById('global-chart-type').value;
+    
+    if (type === 'doughnut') {
+        priceChart.data.datasets[0].data = ALL_ASSETS.map(a => marketPrices[a.ticker]);
+    } else {
+        ALL_ASSETS.forEach((asset, i) => {
+            priceChart.data.datasets[i].data = priceHistory[asset.ticker];
+        });
+    }
+    
+    priceChart.update();
 }
 
 document.addEventListener('DOMContentLoaded', init);

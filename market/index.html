@@ -3,21 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Beef Market - Master Control</title>
+  <title>Beef Market - Global Exchange</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@700&display=swap');
 
     :root {
-      --bg: #030303;
-      --panel: #0a0a0a;
-      --panel-alt: #111111;
-      --border: #222;
-      --green: #00ff41;
-      --red: #ff003c;
-      --blue: #00d2ff;
-      --gold: #f1c40f;
-      --text: #e0e0e0;
-      --muted: #666;
+      --bg: #000000;
+      --surface: #111111;
+      --surface-hover: #1a1a1a;
+      --border: #222222;
+      --text: #ffffff;
+      --text-muted: #888888;
+      --green: #00c076;
+      --red: #ff3344;
+      --accent: #2e8af6;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -25,215 +24,152 @@
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Space Mono', monospace;
-      overflow: hidden; /* Prevent page scrolling */
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* ── NAV & TICKER ── */
-    .top-bar {
-      flex: 0 0 auto;
-    }
-
-    .site-nav {
-      background: #000;
+    /* ── NAV ── */
+    .top-nav {
+      flex: 0 0 60px;
       border-bottom: 1px solid var(--border);
-      padding: 0.5rem 1.5rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-family: 'Bebas Neue', sans-serif;
-      letter-spacing: 0.15em;
-      font-size: 1.2rem;
+      padding: 0 2rem;
+      background: var(--bg);
     }
-    .site-nav a { color: var(--text); text-decoration: none; transition: color 0.2s; }
-    .site-nav a:hover { color: var(--green); }
+    .nav-brand { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 1rem; }
+    .nav-brand a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+    .nav-brand a:hover { color: var(--text); }
+    .nav-status { font-size: 0.8rem; color: var(--green); display: flex; align-items: center; gap: 0.5rem; }
+    .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
 
-    .news-ticker {
-      background: #050505;
-      border-bottom: 1px solid var(--border);
-      padding: 0.4rem 0;
-      overflow: hidden;
-      white-space: nowrap;
-      position: relative;
-    }
-    .news-inner {
-      display: inline-block;
-      font-weight: 700;
-      font-size: 0.75rem;
-      letter-spacing: 0.1em;
-      color: var(--gold);
-      animation: ticker 30s linear infinite;
-    }
-    @keyframes ticker {
-      0% { transform: translateX(100vw); }
-      100% { transform: translateX(-100%); }
-    }
-
-    /* ── DASHBOARD GRID ── */
+    /* ── LAYOUT ── */
     .dashboard {
-      flex: 1 1 auto;
-      display: grid;
-      grid-template-columns: 350px 1fr 300px;
-      gap: 1px;
-      background: var(--border);
-      overflow: hidden; /* Contains inner scrolls */
+      flex: 1;
+      display: flex;
+      overflow: hidden;
     }
 
-    .panel {
-      background: var(--panel);
+    /* ── LEFT: ASSET LIST ── */
+    .sidebar {
+      flex: 0 0 320px;
+      border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      background: var(--bg);
     }
+    .sidebar-header {
+      padding: 1.5rem 1.5rem 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+    .asset-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem;
+    }
+    .asset-list::-webkit-scrollbar { width: 6px; }
+    .asset-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-    .panel-header {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 1.5rem;
-      letter-spacing: 0.1em;
-      background: var(--panel-alt);
-      border-bottom: 1px solid var(--border);
-      padding: 0.8rem 1rem;
+    .asset-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex: 0 0 auto;
-    }
-    .panel-header span {
-      font-family: 'Space Mono', monospace;
-      font-size: 0.65rem;
-      color: var(--muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .panel-content {
-      flex: 1 1 auto;
-      overflow-y: auto;
       padding: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
     }
+    .asset-item:hover, .asset-item.active { background: var(--surface); }
+    .asset-item.active { box-shadow: inset 2px 0 0 var(--accent); }
     
-    /* Scrollbar styling */
-    .panel-content::-webkit-scrollbar { width: 4px; }
-    .panel-content::-webkit-scrollbar-thumb { background: #333; }
-    .panel-content::-webkit-scrollbar-track { background: var(--panel); }
-
-    /* ── LEFT: STOCKS ── */
-    .stock-list { display: flex; flex-direction: column; gap: 0.25rem; }
+    .asset-info { display: flex; flex-direction: column; gap: 0.2rem; }
+    .asset-name { font-weight: 600; font-size: 0.95rem; }
+    .asset-ticker { font-size: 0.75rem; color: var(--text-muted); }
     
-    .stock-row {
-      display: grid;
-      grid-template-columns: 2.5fr 2fr 1.5fr auto;
-      align-items: center;
-      padding: 0.5rem;
-      background: #050505;
-      border: 1px solid #111;
-      font-size: 0.8rem;
-    }
-    .stock-row:hover { border-color: var(--muted); background: #0a0a0a; }
-    .stock-row.index-fund { border-left: 2px solid var(--blue); }
-
-    .stock-name { font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .stock-ticker { font-size: 0.6rem; color: var(--muted); }
-    .stock-price { text-align: right; font-weight: 700; }
-    .stock-change { text-align: right; font-size: 0.7rem; }
-    
+    .asset-price-box { text-align: right; display: flex; flex-direction: column; gap: 0.2rem; }
+    .asset-price { font-family: 'Space Mono', monospace; font-size: 0.95rem; }
+    .asset-change { font-size: 0.8rem; font-weight: 500; }
     .up { color: var(--green); }
     .down { color: var(--red); }
-    .neutral { color: var(--muted); }
 
-    .actions { display: flex; gap: 0.25rem; justify-content: flex-end; margin-left: 0.5rem; }
-    .btn {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-      font-family: 'Space Mono', monospace;
-      font-size: 0.7rem;
-      padding: 0.2rem 0.5rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-buy:hover { background: var(--green); color: #000; border-color: var(--green); }
-    .btn-sell:hover { background: var(--red); color: #000; border-color: var(--red); }
-    .btn:disabled { opacity: 0.2; cursor: not-allowed; }
-
-    /* ── CENTER: CHARTS & ALGO ── */
-    .center-col {
+    /* ── CENTER: MAIN VIEW ── */
+    .main-view {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 1px;
-      background: var(--border);
+      padding: 2rem 3rem;
+      overflow-y: auto;
+      background: var(--bg);
     }
     
-    .chart-panel { flex: 2; display: flex; flex-direction: column; background: var(--panel); overflow: hidden; }
-    .chart-controls {
+    .main-header { margin-bottom: 2rem; }
+    .main-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem; }
+    .main-price { font-family: 'Space Mono', monospace; font-size: 3rem; font-weight: 700; line-height: 1; }
+    .main-change { font-size: 1.2rem; font-weight: 500; margin-top: 0.5rem; }
+
+    .chart-box {
+      flex: 1;
+      min-height: 400px;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+
+    .trade-section {
       display: flex;
-      gap: 1rem;
-      padding: 0.5rem 1rem;
-      background: var(--panel-alt);
+      gap: 2rem;
+      background: var(--surface);
+      padding: 2rem;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .trade-info { flex: 1; }
+    .trade-info h3 { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+    .trade-info p { font-size: 1.5rem; font-weight: 600; font-family: 'Space Mono', monospace; }
+    
+    .trade-actions { flex: 1; display: flex; gap: 1rem; align-items: center; }
+    .btn { flex: 1; padding: 1.2rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.2s; color: #fff; }
+    .btn:hover { opacity: 0.9; }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .btn-buy { background: var(--green); }
+    .btn-sell { background: var(--red); }
+
+    /* ── RIGHT: PORTFOLIO ── */
+    .right-sidebar {
+      flex: 0 0 350px;
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+    }
+
+    .portfolio-box {
+      padding: 2rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      align-items: center;
     }
-    .chart-controls select {
-      background: #000;
-      color: var(--text);
-      border: 1px solid var(--border);
-      padding: 0.3rem 0.5rem;
-      font-family: inherit;
-      font-size: 0.8rem;
-      outline: none;
-    }
-    .chart-container { flex: 1; padding: 1rem; position: relative; min-height: 0; }
+    .portfolio-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; }
+    .portfolio-value { font-family: 'Space Mono', monospace; font-size: 2.5rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 0.5rem; }
+    .buying-power { font-size: 0.9rem; color: var(--text-muted); }
 
-    .algo-panel { flex: 1; display: flex; flex-direction: column; background: var(--panel); overflow: hidden; border-top: 1px solid var(--border); }
-    .algo-builder {
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-      font-size: 0.8rem;
-      background: #050505;
-      padding: 0.5rem;
-      border: 1px solid var(--border);
-    }
-    .algo-builder select, .algo-builder input {
-      background: #000; color: var(--text); border: 1px solid var(--border); padding: 0.3rem; font-family: inherit; font-size: 0.8rem;
-    }
-    .algo-builder input { width: 60px; }
-    
-    .algo-list { display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto; }
-    .algo-item {
-      background: #050505; border-left: 2px solid var(--blue); padding: 0.5rem;
-      display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;
-    }
-
-    /* ── RIGHT: PORTFOLIO & INTEL ── */
-    .right-col {
+    .leaderboard-box {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      gap: 1px;
-      background: var(--border);
+      padding: 1.5rem;
+      overflow-y: auto;
     }
+    .leaderboard-box h3 { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
     
-    .portfolio-panel { flex: 1; background: var(--panel); display: flex; flex-direction: column; }
-    .net-worth-box {
-      text-align: center; padding: 1.5rem 1rem; background: #050505; border: 1px solid var(--border); margin-bottom: 1rem;
-    }
-    .net-worth-label { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-    .net-worth-val { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--green); line-height: 1; margin: 0.5rem 0; }
-    .cash-val { font-size: 0.8rem; color: var(--blue); }
-
-    .holdings-list { display: flex; flex-direction: column; gap: 0.3rem; font-size: 0.8rem; }
-    .holding-item { display: flex; justify-content: space-between; padding: 0.3rem; background: rgba(255,255,255,0.02); border-bottom: 1px solid #111;}
-
-    .leaderboard-panel { flex: 1; background: var(--panel); display: flex; flex-direction: column; border-top: 1px solid var(--border); }
-    .leaderboard-list { display: flex; flex-direction: column; gap: 0.2rem; }
-    .lb-row { display: flex; justify-content: space-between; padding: 0.5rem; background: #050505; font-size: 0.8rem; align-items: center; }
-    .lb-row.top { border-left: 2px solid var(--gold); }
-    .lb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+    .lb-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .lb-row { display: flex; justify-content: space-between; padding: 0.8rem 1rem; background: var(--surface); border-radius: 8px; font-size: 0.9rem; font-weight: 500; }
+    .lb-row.top { border-left: 3px solid var(--accent); background: rgba(46, 138, 246, 0.1); }
+    .lb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+    .lb-net { font-family: 'Space Mono', monospace; }
 
     /* ── AUTH WALL ── */
     #auth-wall {
@@ -249,126 +185,106 @@
     }
     .auth-box {
       padding: 3rem;
-      background: var(--panel);
+      background: var(--surface);
       border: 1px solid var(--border);
+      border-radius: 16px;
       max-width: 400px;
     }
-    .auth-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; margin-bottom: 1rem; color: var(--green); }
-    .auth-box p { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.5; }
-    .btn-login { background: var(--text); color: #000; border: none; padding: 1rem 2rem; font-size: 1rem; cursor: pointer; width: 100%; font-weight: 700; font-family: inherit; transition: opacity 0.2s; }
+    .auth-box h2 { font-size: 2rem; margin-bottom: 1rem; font-weight: 700; letter-spacing: -0.02em; }
+    .auth-box p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 2rem; line-height: 1.5; }
+    .btn-login { background: var(--text); color: #000; border: none; padding: 1rem 2rem; font-size: 1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600; transition: opacity 0.2s; }
     .btn-login:hover { opacity: 0.8; }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1100px) {
       body { overflow: auto; height: auto; }
-      .dashboard { grid-template-columns: 1fr; height: auto; overflow: visible; }
-      .panel { max-height: 500px; }
-      .chart-container { min-height: 300px; }
+      .dashboard { flex-direction: column; }
+      .sidebar { flex: none; height: 300px; border-right: none; border-bottom: 1px solid var(--border); }
+      .right-sidebar { flex: none; border-left: none; border-top: 1px solid var(--border); }
+      .main-view { padding: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
-  <div class="top-bar">
-    <nav class="site-nav">
+  <nav class="top-nav">
+    <div class="nav-brand">
       <a href="../">← THE FILES</a>
-      <div style="color: var(--green);">BEEF MARKET TERMINAL v3.0</div>
-    </nav>
-    <div class="news-ticker">
-      <span class="news-inner" id="news-marquee">
-        MARKET OPEN &nbsp;·&nbsp; INITIALIZING QUANTITATIVE ANALYSIS &nbsp;·&nbsp; STAND BY FOR LORE EVENTS &nbsp;·&nbsp; 
-      </span>
+      <span>Beef Market Exchange</span>
     </div>
-  </div>
+    <div class="nav-status">
+      <div class="status-dot"></div>
+      Global Sync Active
+    </div>
+  </nav>
 
   <div id="auth-wall">
     <div class="auth-box">
-      <h2>Terminal Access</h2>
-      <p>Authentication required. Secure connection to Supabase mainframe established. Awaiting trader identity.</p>
-      <button class="btn-login" id="market-login-btn">Authenticate via Google</button>
+      <h2>Welcome to the Exchange</h2>
+      <p>Authentication required. Secure connection to the global deterministic market established.</p>
+      <button class="btn-login" id="market-login-btn">Continue with Google</button>
     </div>
   </div>
 
   <div class="dashboard" id="market-dashboard" style="visibility: hidden;">
     
-    <!-- LEFT: MARKET TICKERS -->
-    <div class="panel">
-      <div class="panel-header">Market Tickers <span id="market-status" style="color: var(--green);">Active</span></div>
-      <div class="panel-content">
-        <div class="stock-list" id="stock-list">
-          <!-- JS fills -->
-        </div>
+    <!-- LEFT: ASSETS -->
+    <aside class="sidebar">
+      <div class="sidebar-header">Tradable Assets</div>
+      <div class="asset-list" id="asset-list">
+        <!-- JS fills -->
       </div>
-    </div>
+    </aside>
 
-    <!-- CENTER: CHARTS & ALGO -->
-    <div class="center-col">
-      <div class="chart-panel">
-        <div class="panel-header">Quantitative Analysis <span>Live Data</span></div>
-        <div class="chart-controls">
-          <select id="chart-type" onchange="updateChartConfig()">
-            <option value="line">Line Chart</option>
-            <option value="bar">Bar Chart</option>
+    <!-- CENTER: TRADING VIEW -->
+    <main class="main-view">
+      <div class="main-header">
+        <h1 class="main-title" id="main-name">Global Overview</h1>
+        <div class="main-price" id="main-price">---</div>
+        <div class="main-change" id="main-change" style="color: var(--text-muted); font-size: 0.9rem;">Select an asset from the sidebar to trade.</div>
+      </div>
+      
+      <div class="chart-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+          <select id="global-chart-type" onchange="changeChartType()" style="background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+              <option value="line">Line Chart (Trend)</option>
+              <option value="bar">Bar Chart (Volume)</option>
+              <option value="radar">Radar Chart (Spread)</option>
+              <option value="doughnut">Doughnut (Current Cap)</option>
           </select>
-          <div style="font-size: 0.7rem; color: var(--muted);">Displaying all assets by default. Click legend items to toggle.</div>
-        </div>
-        <div class="chart-container">
-          <canvas id="priceChart"></canvas>
-        </div>
+          <button class="btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; background: var(--surface); color: var(--text); border: 1px solid var(--border);" onclick="toggleAllAssets()">Toggle All Lines</button>
       </div>
 
-      <div class="algo-panel">
-        <div class="panel-header">Algo Bot <span>Automated Execution</span></div>
-        <div class="panel-content">
-          <div class="algo-builder">
-            <span>IF</span>
-            <select id="algo-asset"></select>
-            <select id="algo-condition">
-              <option value="drops_below">Drops <</option>
-              <option value="goes_above">Rises ></option>
-            </select>
-            <span>$</span>
-            <input type="number" id="algo-price" placeholder="Price">
-            <span>THEN</span>
-            <select id="algo-action">
-              <option value="buy">BUY</option>
-              <option value="sell">SELL</option>
-            </select>
-            <input type="number" id="algo-qty" placeholder="Qty" value="1">
-            <button class="btn btn-buy" onclick="addAlgoRule()">ADD</button>
-          </div>
-          <div class="algo-list" id="algo-list">
-            <!-- JS fills -->
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIGHT: PORTFOLIO & LEADERBOARD -->
-    <div class="right-col">
-      <div class="portfolio-panel">
-        <div class="panel-header">Portfolio <span>Your Assets</span></div>
-        <div class="panel-content">
-          <div class="net-worth-box">
-            <div class="net-worth-label">Total Net Worth</div>
-            <div class="net-worth-val" id="net-worth-display">0.00</div>
-            <div class="cash-val" id="cash-display">Liquid: $1000.00</div>
-          </div>
-          <div style="font-size: 0.7rem; color: var(--muted); margin-bottom: 0.5rem; border-bottom: 1px solid var(--border); padding-bottom: 0.25rem;">HOLDINGS</div>
-          <div class="holdings-list" id="holdings-list">
-            <!-- JS fills -->
-          </div>
-        </div>
+      <div class="chart-box">
+        <canvas id="priceChart"></canvas>
       </div>
 
-      <div class="leaderboard-panel">
-        <div class="panel-header">Forbes List <span>Global Rank</span></div>
-        <div class="panel-content">
-          <div class="leaderboard-list" id="market-leaderboard">
-            <div style="color: var(--muted); font-size: 0.8rem; text-align: center;">Connecting...</div>
-          </div>
+      <div class="trade-section" id="trade-section" style="display: none;">
+        <div class="trade-info">
+          <h3>Your Position</h3>
+          <p id="pos-shares">0 Shares</p>
+          <p id="pos-value" style="font-size: 1rem; color: var(--text-muted); margin-top: 0.2rem;">$0.00</p>
+        </div>
+        <div class="trade-actions">
+          <button class="btn btn-sell" id="btn-sell" onclick="tradeSelected('sell')">Sell</button>
+          <button class="btn btn-buy" id="btn-buy" onclick="tradeSelected('buy')">Buy</button>
         </div>
       </div>
-    </div>
+    </main>
+
+    <!-- RIGHT: PORTFOLIO -->
+    <aside class="right-sidebar">
+      <div class="portfolio-box">
+        <div class="portfolio-label">Total Portfolio Value</div>
+        <div class="portfolio-value" id="net-worth-display">$0.00</div>
+        <div class="buying-power" id="cash-display">Buying Power: $0.00</div>
+      </div>
+
+      <div class="leaderboard-box">
+        <h3>Global Forbes List</h3>
+        <div class="lb-list" id="market-leaderboard">
+          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 2rem;">Synchronizing...</div>
+        </div>
+      </div>
+    </aside>
 
   </div>
 
