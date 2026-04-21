@@ -15,34 +15,36 @@ let portfolio = {
 
 // Core Assets
 const STOCKS = [
-    { ticker: 'AMR', name: 'Amr', price: 100, vol: 0.02 },
-    { ticker: 'AYRN', name: 'AyAron', price: 150, vol: 0.05 },
-    { ticker: 'JSPR', name: 'Jasper', price: 50, vol: 0.15 },
-    { ticker: 'MAX', name: 'Max', price: 120, vol: 0.03 },
-    { ticker: 'SGN', name: 'Sagan', price: 80, vol: 0.08 },
-    { ticker: 'TBN', name: 'T-Bone', price: 90, vol: 0.06 },
-    { ticker: 'AHMD', name: 'Ahmed', price: 200, vol: 0.04 },
-    { ticker: 'LTHM', name: 'Latham', price: 40, vol: 0.12 },
-    { ticker: 'DEV', name: 'Dev', price: 65, vol: 0.10 },
-    { ticker: 'TJ', name: 'TJ', price: 46, vol: 0.14 },
-    { ticker: 'MAC', name: 'Mac', price: 250, vol: 0.03 },
-    { ticker: 'PRST', name: 'Preston', price: 300, vol: 0.05 },
-    { ticker: 'LI', name: 'Li Mills', price: 75, vol: 0.18 },
-    { ticker: 'JVR', name: 'Javier', price: 110, vol: 0.07 },
-    { ticker: 'SAM', name: 'Sam Bradley', price: 180, vol: 0.06 }
+    { ticker: 'AMR', name: 'Amr', price: 100, vol: 0.02, color: '#ff003c' },
+    { ticker: 'AYRN', name: 'AyAron', price: 150, vol: 0.05, color: '#00ff41' },
+    { ticker: 'JSPR', name: 'Jasper', price: 50, vol: 0.15, color: '#00d2ff' },
+    { ticker: 'MAX', name: 'Max', price: 120, vol: 0.03, color: '#f1c40f' },
+    { ticker: 'SGN', name: 'Sagan', price: 80, vol: 0.08, color: '#9b59b6' },
+    { ticker: 'TBN', name: 'T-Bone', price: 90, vol: 0.06, color: '#e67e22' },
+    { ticker: 'AHMD', name: 'Ahmed', price: 200, vol: 0.04, color: '#1abc9c' },
+    { ticker: 'LTHM', name: 'Latham', price: 40, vol: 0.12, color: '#34495e' },
+    { ticker: 'DEV', name: 'Dev', price: 65, vol: 0.10, color: '#e74c3c' },
+    { ticker: 'TJ', name: 'TJ', price: 46, vol: 0.14, color: '#2ecc71' },
+    { ticker: 'MAC', name: 'Mac', price: 250, vol: 0.03, color: '#3498db' },
+    { ticker: 'PRST', name: 'Preston', price: 300, vol: 0.05, color: '#f39c12' },
+    { ticker: 'LI', name: 'Li Mills', price: 75, vol: 0.18, color: '#8e44ad' },
+    { ticker: 'JVR', name: 'Javier', price: 110, vol: 0.07, color: '#d35400' },
+    { ticker: 'SAM', name: 'Sam Bradley', price: 180, vol: 0.06, color: '#16a085' }
 ];
 
 // Composite Assets (Index Funds)
 const INDEX_FUNDS = [
-    { ticker: 'FRSH', name: 'Freshman ETF', components: ['AHMD', 'LI'], desc: 'Ahmed + Li' },
-    { ticker: 'SHNGN', name: 'Shenanigan Index', components: ['LI', 'SAM'], desc: 'Li + Sam' },
-    { ticker: 'ROYAL', name: 'Clavicular Trust', components: ['PRST', 'JVR'], desc: 'Preston + Javier' }
+    { ticker: 'FRSH', name: 'Freshman ETF', components: ['AHMD', 'LI'], desc: 'Ahmed + Li', color: '#ff00ff' },
+    { ticker: 'SHNGN', name: 'Shenanigan Index', components: ['LI', 'SAM'], desc: 'Li + Sam', color: '#ffff00' },
+    { ticker: 'ROYAL', name: 'Clavicular Trust', components: ['PRST', 'JVR'], desc: 'Preston + Javier', color: '#00ffff' }
 ];
+
+const ALL_ASSETS = [...STOCKS, ...INDEX_FUNDS];
 
 let marketPrices = {};
 let previousPrices = {};
 let priceHistory = {}; 
-const MAX_HISTORY = 60; // 60 ticks of history
+const MAX_HISTORY = 60;
 
 let algoRules = [];
 
@@ -63,20 +65,23 @@ async function init() {
     let { data: { session } } = await _supabase.auth.getSession();
     
     if (!session) {
-        document.getElementById('market-login-btn').addEventListener('click', () => {
-            _supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href }});
-        });
+        const btn = document.getElementById('market-login-btn');
+        if (btn) {
+            btn.addEventListener('click', () => {
+                _supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href }});
+            });
+        }
         return;
     }
 
     document.getElementById('auth-wall').style.display = 'none';
-    document.getElementById('tabs-container').style.display = 'flex';
+    document.getElementById('market-dashboard').style.visibility = 'visible';
     
     currentUser = session.user;
     currentName = currentUser.user_metadata?.full_name || currentUser.email || 'Trader';
 
     // Load Local Data
-    const savedData = localStorage.getItem(`beef_portfolio_v2_${currentUser.id}`);
+    const savedData = localStorage.getItem(`beef_portfolio_v3_${currentUser.id}`);
     if (savedData) {
         const parsed = JSON.parse(savedData);
         portfolio.cash = parsed.cash;
@@ -115,14 +120,9 @@ async function init() {
 }
 
 function initUI() {
-    // Setup Dropdowns for Chart & Algo
-    const allAssets = [...STOCKS, ...INDEX_FUNDS];
-    const chartSel = document.getElementById('chart-selector');
     const algoSel = document.getElementById('algo-asset');
-    
-    let optionsHtml = allAssets.map(a => `<option value="${a.ticker}">${a.name} ($${a.ticker})</option>`).join('');
-    chartSel.innerHTML = optionsHtml;
-    algoSel.innerHTML = optionsHtml;
+    let optionsHtml = ALL_ASSETS.map(a => `<option value="${a.ticker}">${a.name} ($${a.ticker})</option>`).join('');
+    if (algoSel) algoSel.innerHTML = optionsHtml;
 
     initChart();
     renderMarket();
@@ -130,21 +130,7 @@ function initUI() {
     renderAlgoList();
 }
 
-window.switchTab = function(element, tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    
-    element.classList.add('active');
-    document.getElementById(`tab-${tabId}`).classList.add('active');
-
-    if (tabId === 'intel') {
-        updateChartData();
-        updateIntel();
-    }
-}
-
 function startMarketSimulation() {
-    // Tick every 2 seconds
     setInterval(() => {
         // Core Stocks
         STOCKS.forEach(s => {
@@ -168,20 +154,17 @@ function startMarketSimulation() {
         });
 
         runAlgos();
-
         renderMarket();
         renderPortfolio();
+        updateChartData();
         
-        if (document.getElementById('tab-intel').classList.contains('active')) {
-            updateIntel();
-            updateChartData();
-        }
     }, 2000);
 
     // News Events
     setInterval(() => {
         const event = NEWS_EVENTS[Math.floor(Math.random() * NEWS_EVENTS.length)];
-        document.getElementById('news-marquee').innerText = event.text;
+        const marquee = document.getElementById('news-marquee');
+        if (marquee) marquee.innerText = event.text;
 
         for (const [ticker, impact] of Object.entries(event.impacts)) {
             marketPrices[ticker] = Math.max(1, marketPrices[ticker] * (1 + impact));
@@ -199,11 +182,7 @@ window.addAlgoRule = function() {
 
     if (isNaN(price) || isNaN(qty) || qty <= 0) return alert("Invalid numbers");
 
-    algoRules.push({
-        id: Date.now(),
-        asset, condition, price, action, qty
-    });
-    
+    algoRules.push({ id: Date.now(), asset, condition, price, action, qty });
     saveData();
     renderAlgoList();
 }
@@ -216,8 +195,10 @@ window.removeAlgoRule = function(id) {
 
 function renderAlgoList() {
     const list = document.getElementById('algo-list');
+    if (!list) return;
+    
     if (algoRules.length === 0) {
-        list.innerHTML = '<div style="color: #444; font-size: 0.9rem;">No active algorithms.</div>';
+        list.innerHTML = '<div style="color: #444; font-size: 0.8rem; text-align: center; padding: 1rem;">No active algorithms.</div>';
         return;
     }
 
@@ -229,7 +210,7 @@ function renderAlgoList() {
                 $${r.price} 
                 <strong>THEN</strong> <span class="${r.action === 'buy' ? 'up' : 'down'}">${r.action.toUpperCase()}</span> ${r.qty}
             </div>
-            <button class="btn btn-sell" style="padding: 0.2rem 0.5rem;" onclick="removeAlgoRule(${r.id})">X</button>
+            <button class="btn btn-sell" style="padding: 0.1rem 0.4rem; font-size:0.6rem;" onclick="removeAlgoRule(${r.id})">X</button>
         </div>
     `).join('');
 }
@@ -259,78 +240,87 @@ function runAlgos() {
     if (triggered) saveData();
 }
 
-// INTEL & CHARTS
-function updateIntel() {
-    let best = { ticker: '', change: -999 };
-    let worst = { ticker: '', change: 999 };
-    let volatile = { ticker: '', spread: 0 };
-
-    const allAssets = [...STOCKS, ...INDEX_FUNDS];
-    
-    allAssets.forEach(a => {
-        const hist = priceHistory[a.ticker];
-        if (!hist) return;
-        const oldPrice = hist[0];
-        const newPrice = hist[hist.length - 1];
-        const pctChange = ((newPrice - oldPrice) / oldPrice) * 100;
-        
-        const min = Math.min(...hist);
-        const max = Math.max(...hist);
-        const spread = ((max - min) / min) * 100;
-
-        if (pctChange > best.change) best = { ticker: a.ticker, change: pctChange };
-        if (pctChange < worst.change) worst = { ticker: a.ticker, change: pctChange };
-        if (spread > volatile.spread) volatile = { ticker: a.ticker, spread: spread };
-    });
-
-    document.getElementById('intel-gainer').innerText = `$${best.ticker} (+${best.change.toFixed(1)}%)`;
-    document.getElementById('intel-loser').innerText = `$${worst.ticker} (${worst.change.toFixed(1)}%)`;
-    document.getElementById('intel-volatile').innerText = `$${volatile.ticker}`;
-}
-
+// CHARTS
 function initChart() {
-    const ctx = document.getElementById('priceChart').getContext('2d');
-    priceChart = new Chart(ctx, {
+    const ctx = document.getElementById('priceChart');
+    if (!ctx) return;
+
+    const datasets = ALL_ASSETS.map(asset => ({
+        label: asset.ticker,
+        data: priceHistory[asset.ticker],
+        borderColor: asset.color,
+        backgroundColor: asset.color + '33', // 20% opacity
+        borderWidth: 2,
+        pointRadius: 0,
+        fill: false,
+        tension: 0.1
+    }));
+
+    priceChart = new Chart(ctx.getContext('2d'), {
         type: 'line',
         data: {
             labels: Array(MAX_HISTORY).fill(''),
-            datasets: [{
-                label: 'Price',
-                data: [],
-                borderColor: '#00ff41',
-                backgroundColor: 'rgba(0, 255, 65, 0.1)',
-                borderWidth: 2,
-                pointRadius: 0,
-                fill: true,
-                tension: 0.1
-            }]
+            datasets: datasets
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
             animation: false,
-            plugins: { legend: { display: false } },
+            plugins: { 
+                legend: { 
+                    display: true, 
+                    position: 'bottom',
+                    labels: { color: '#e0e0e0', font: { size: 10 } }
+                } 
+            },
             scales: {
                 y: { grid: { color: '#222' }, ticks: { color: '#666' } },
                 x: { grid: { display: false } }
+            },
+            interaction: {
+                mode: 'nearest',
+                axis: 'x',
+                intersect: false
             }
         }
     });
 }
 
-window.updateChartData = function() {
+window.updateChartConfig = function() {
     if (!priceChart) return;
-    const ticker = document.getElementById('chart-selector').value;
-    priceChart.data.datasets[0].data = priceHistory[ticker];
+    const type = document.getElementById('chart-type').value;
+    priceChart.config.type = type;
+    
+    // Adjust fill for bar charts to look better
+    priceChart.data.datasets.forEach(ds => {
+        if (type === 'bar') {
+            ds.backgroundColor = ds.borderColor + '88'; // more opaque for bars
+            ds.borderWidth = 1;
+        } else {
+            ds.backgroundColor = ds.borderColor + '33'; 
+            ds.borderWidth = 2;
+            ds.fill = false;
+        }
+    });
+    
+    priceChart.update();
+}
+
+function updateChartData() {
+    if (!priceChart) return;
+    
+    ALL_ASSETS.forEach((asset, i) => {
+        priceChart.data.datasets[i].data = priceHistory[asset.ticker];
+    });
     priceChart.update();
 }
 
 // RENDERING
 function renderMarket() {
     const list = document.getElementById('stock-list');
-    const allAssets = [...STOCKS, ...INDEX_FUNDS];
+    if (!list) return;
     
-    list.innerHTML = allAssets.map(s => {
+    list.innerHTML = ALL_ASSETS.map(s => {
         const current = marketPrices[s.ticker];
         const prev = previousPrices[s.ticker];
         const isUp = current >= prev;
@@ -341,14 +331,14 @@ function renderMarket() {
         return `
             <div class="stock-row ${isIndex ? 'index-fund' : ''}">
                 <div>
-                    <div class="stock-name">${s.name} ${isIndex ? '<span style="font-size:0.6rem;color:#00d2ff;">ETF</span>' : ''}</div>
-                    <div class="stock-ticker">$${s.ticker}</div>
+                    <div class="stock-name">${s.name} ${isIndex ? '<span style="font-size:0.6rem;color:#00d2ff;vertical-align:top;">ETF</span>' : ''}</div>
+                    <div class="stock-ticker" style="color: ${s.color};">$${s.ticker}</div>
                 </div>
                 <div class="stock-price">$${current.toFixed(2)}</div>
                 <div class="stock-change ${changeClass}">${changeSymbol} ${Math.abs(((current - prev)/prev)*100).toFixed(1)}%</div>
                 <div class="actions">
-                    <button class="btn btn-sell" onclick="sell('${s.ticker}')" ${portfolio.holdings[s.ticker] <= 0 ? 'disabled' : ''}>SELL</button>
-                    <button class="btn btn-buy" onclick="buy('${s.ticker}')" ${portfolio.cash < current ? 'disabled' : ''}>BUY</button>
+                    <button class="btn btn-sell" onclick="sell('${s.ticker}')" ${portfolio.holdings[s.ticker] <= 0 ? 'disabled' : ''}>S</button>
+                    <button class="btn btn-buy" onclick="buy('${s.ticker}')" ${portfolio.cash < current ? 'disabled' : ''}>B</button>
                 </div>
             </div>
         `;
@@ -359,32 +349,34 @@ function renderPortfolio() {
     let netWorth = portfolio.cash;
     let holdingsHtml = '';
 
-    const allAssets = [...STOCKS, ...INDEX_FUNDS];
-
-    allAssets.forEach(s => {
+    ALL_ASSETS.forEach(s => {
         const qty = portfolio.holdings[s.ticker] || 0;
         if (qty > 0) {
             const value = qty * marketPrices[s.ticker];
             netWorth += value;
             holdingsHtml += `
                 <div class="holding-item">
-                    <span>${qty}x $${s.ticker}</span>
+                    <span>${qty}x <span style="color:${s.color}">$${s.ticker}</span></span>
                     <span>$${value.toFixed(2)}</span>
                 </div>
             `;
         }
     });
 
-    document.getElementById('net-worth-display').innerText = `$${netWorth.toFixed(2)}`;
-    document.getElementById('cash-display').innerText = `Liquid Cash: $${portfolio.cash.toFixed(2)}`;
-    document.getElementById('holdings-list').innerHTML = holdingsHtml || '<div style="color: #444;">No open positions.</div>';
+    const nwDisplay = document.getElementById('net-worth-display');
+    const cashDisplay = document.getElementById('cash-display');
+    const hList = document.getElementById('holdings-list');
+
+    if (nwDisplay) nwDisplay.innerText = `$${netWorth.toFixed(2)}`;
+    if (cashDisplay) cashDisplay.innerText = `Liquid: $${portfolio.cash.toFixed(2)}`;
+    if (hList) hList.innerHTML = holdingsHtml || '<div style="color: #444; font-size: 0.8rem; text-align: center;">No open positions.</div>';
     
     saveData();
 }
 
 function saveData() {
     if (currentUser) {
-        localStorage.setItem(`beef_portfolio_v2_${currentUser.id}`, JSON.stringify({
+        localStorage.setItem(`beef_portfolio_v3_${currentUser.id}`, JSON.stringify({
             cash: portfolio.cash,
             holdings: portfolio.holdings,
             algoRules: algoRules
@@ -427,12 +419,15 @@ async function syncNetWorth() {
 }
 
 async function fetchLeaderboard() {
-    const { data, error } = await _supabase.from('market_players').select('name, net_worth').order('net_worth', { ascending: false }).limit(10);
+    const { data, error } = await _supabase.from('market_players').select('name, net_worth').order('net_worth', { ascending: false }).limit(15);
     if (error || !data) return;
 
-    document.getElementById('market-leaderboard').innerHTML = data.map((p, i) => `
+    const list = document.getElementById('market-leaderboard');
+    if (!list) return;
+
+    list.innerHTML = data.map((p, i) => `
         <div class="lb-row ${i === 0 ? 'top' : ''}">
-            <span>#${i + 1} ${p.name}</span>
+            <span class="lb-name">#${i + 1} ${sanitize(p.name)}</span>
             <span style="color: var(--green); font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem;">$${parseFloat(p.net_worth).toFixed(2)}</span>
         </div>
     `).join('');
