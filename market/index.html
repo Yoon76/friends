@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Beef Market</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&display=swap');
+
+    :root {
+      --bg: #030303;
+      --panel: #0a0a0a;
+      --border: #222;
+      --green: #00ff41;
+      --red: #ff003c;
+      --text: #e0e0e0;
+      --muted: #666;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── NAV ── */
+    .site-nav {
+      background: #000;
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: 0.15em;
+    }
+    .site-nav a { color: var(--text); text-decoration: none; transition: color 0.2s; }
+    .site-nav a:hover { color: var(--green); }
+
+    /* ── NEWS TICKER ── */
+    .news-ticker {
+      background: #111;
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 0;
+      overflow: hidden;
+      white-space: nowrap;
+      position: relative;
+    }
+    .news-inner {
+      display: inline-block;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      color: var(--green);
+      animation: ticker 25s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(100vw); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* ── DASHBOARD ── */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1px;
+      background: var(--border);
+      flex: 1;
+    }
+
+    .panel {
+      background: var(--panel);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .panel-header {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2rem;
+      letter-spacing: 0.1em;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .panel-header span {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+
+    /* ── STOCKS TABLE ── */
+    .stock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+    
+    .stock-list::-webkit-scrollbar { width: 4px; }
+    .stock-list::-webkit-scrollbar-thumb { background: var(--border); }
+
+    .stock-row {
+      display: grid;
+      grid-template-columns: 2fr 2fr 2fr 3fr;
+      align-items: center;
+      padding: 1rem;
+      background: #050505;
+      border: 1px solid #1a1a1a;
+      transition: border-color 0.2s;
+    }
+    .stock-row:hover { border-color: #333; }
+
+    .stock-name { font-weight: 700; font-size: 1.1rem; }
+    .stock-ticker { font-size: 0.7rem; color: var(--muted); }
+
+    .stock-price { font-size: 1.1rem; text-align: right; }
+    .stock-change { font-size: 0.9rem; text-align: right; font-weight: 700; }
+    
+    .up { color: var(--green); }
+    .down { color: var(--red); }
+
+    .actions { display: flex; gap: 0.5rem; justify-content: flex-end; }
+    .btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      padding: 0.4rem 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-buy:hover { background: var(--green); color: #000; border-color: var(--green); }
+    .btn-sell:hover { background: var(--red); color: #000; border-color: var(--red); }
+    .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── PORTFOLIO & LEADERBOARD ── */
+    .portfolio-summary {
+      margin-bottom: 2rem;
+      padding: 1.5rem;
+      background: #050505;
+      border: 1px solid #1a1a1a;
+    }
+    
+    .net-worth-label { font-size: 0.8rem; color: var(--muted); text-transform: uppercase; }
+    .net-worth-val { font-family: 'Bebas Neue', sans-serif; font-size: 3.5rem; color: var(--green); line-height: 1; margin-top: 0.5rem; }
+    
+    .cash-val { font-size: 0.9rem; color: var(--text); margin-top: 0.5rem; }
+
+    .holdings-list {
+      margin-top: 1.5rem;
+      font-size: 0.85rem;
+      color: #aaa;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    
+    .holding-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #222; padding-bottom: 0.25rem; }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      background: #050505;
+      font-size: 0.85rem;
+    }
+    .lb-row.top { border-left: 2px solid var(--green); }
+
+    /* ── AUTH WALL ── */
+    #auth-wall {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.9);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+    .auth-box {
+      padding: 3rem;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      max-width: 400px;
+    }
+    .auth-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; margin-bottom: 1rem; }
+    .auth-box p { font-size: 0.9rem; color: var(--muted); margin-bottom: 2rem; }
+    .btn-login { background: var(--text); color: #000; border: none; padding: 1rem 2rem; font-size: 1rem; cursor: pointer; width: 100%; font-weight: 700; }
+
+    @media (max-width: 900px) {
+      .dashboard { grid-template-columns: 1fr; }
+      .stock-row { grid-template-columns: 1fr 1fr; gap: 1rem; }
+      .stock-price, .stock-change { text-align: left; }
+      .actions { justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="site-nav">
+    <a href="../">← BACK TO HUB</a>
+    <div>BEEF MARKET TERMINAL v1.0</div>
+  </nav>
+
+  <div class="news-ticker">
+    <span class="news-inner" id="news-marquee">
+      MARKET OPEN &nbsp;·&nbsp; INITIALIZING TICKERS &nbsp;·&nbsp; STAND BY FOR LORE EVENTS &nbsp;·&nbsp; 
+    </span>
+  </div>
+
+  <div id="auth-wall">
+    <div class="auth-box">
+      <h2>Trader Login</h2>
+      <p>You must authenticate your identity to enter the Beef Market. Impersonation is a federal offense.</p>
+      <button class="btn-login" id="market-login-btn">Sign in with Google</button>
+    </div>
+  </div>
+
+  <div class="dashboard" id="market-dashboard" style="display: none;">
+    <!-- LEFT: MARKET -->
+    <div class="panel">
+      <div class="panel-header">
+        Live Market <span>Updating</span>
+      </div>
+      <div class="stock-list" id="stock-list">
+        <!-- JS fills this -->
+      </div>
+    </div>
+
+    <!-- RIGHT: PORTFOLIO & LEADERBOARD -->
+    <div class="panel">
+      <div class="panel-header">
+        Portfolio <span>Your Assets</span>
+      </div>
+      <div class="portfolio-summary">
+        <div class="net-worth-label">Total Net Worth (Aura Bucks)</div>
+        <div class="net-worth-val" id="net-worth-display">0.00</div>
+        <div class="cash-val" id="cash-display">Liquid Cash: $1000.00</div>
+        
+        <div class="holdings-list" id="holdings-list">
+          <!-- JS fills this -->
+        </div>
+      </div>
+
+      <div class="panel-header" style="margin-top: 2rem;">
+        Forbes List <span>Top Traders</span>
+      </div>
+      <div class="leaderboard-list" id="market-leaderboard">
+        <div style="color: var(--muted); font-size: 0.8rem; text-align: center; padding: 2rem;">Connecting to network...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="market.js"></script>
+</body>
+</html>
