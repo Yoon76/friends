@@ -251,19 +251,29 @@ function renderMainView() {
     document.getElementById('pos-value').innerText = `Value: $${val.toFixed(2)}`;
 
     document.getElementById('btn-buy').disabled = portfolio.cash < current;
+    document.getElementById('btn-buy-max').disabled = portfolio.cash < current;
     document.getElementById('btn-sell').disabled = qty <= 0;
+    document.getElementById('btn-sell-all').disabled = qty <= 0;
 }
 
 window.tradeSelected = function(action) {
     const ticker = currentSelectedAsset;
     const price = marketPrices[ticker];
+    const qty = portfolio.holdings[ticker] || 0;
     
     if (action === 'buy' && portfolio.cash >= price) {
         portfolio.cash -= price;
-        portfolio.holdings[ticker] = (portfolio.holdings[ticker] || 0) + 1;
-    } else if (action === 'sell' && (portfolio.holdings[ticker] || 0) > 0) {
-        portfolio.holdings[ticker] -= 1;
+        portfolio.holdings[ticker] = qty + 1;
+    } else if (action === 'buy_max' && portfolio.cash >= price) {
+        const maxBuy = Math.floor(portfolio.cash / price);
+        portfolio.cash -= maxBuy * price;
+        portfolio.holdings[ticker] = qty + maxBuy;
+    } else if (action === 'sell' && qty > 0) {
+        portfolio.holdings[ticker] = qty - 1;
         portfolio.cash += price;
+    } else if (action === 'sell_all' && qty > 0) {
+        portfolio.cash += qty * price;
+        portfolio.holdings[ticker] = 0;
     }
     
     saveData();

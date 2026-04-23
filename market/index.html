@@ -260,12 +260,14 @@
       <div class="trade-section" id="trade-section" style="display: none;">
         <div class="trade-info">
           <h3>Your Position</h3>
-          <p id="pos-shares">0 Shares</p>
-          <p id="pos-value" style="font-size: 1rem; color: var(--text-muted); margin-top: 0.2rem;">$0.00</p>
+          <p id="pos-shares">0 Shares Held</p>
+          <p id="pos-value" style="font-size: 1rem; color: var(--text-muted); margin-top: 0.2rem;">Value: $0.00</p>
         </div>
         <div class="trade-actions">
-          <button class="btn btn-sell" id="btn-sell" onclick="tradeSelected('sell')">Sell</button>
-          <button class="btn btn-buy" id="btn-buy" onclick="tradeSelected('buy')">Buy</button>
+          <button class="btn btn-sell" id="btn-sell-all" onclick="tradeSelected('sell_all')">Sell All</button>
+          <button class="btn btn-sell" id="btn-sell" onclick="tradeSelected('sell')">Sell 1</button>
+          <button class="btn btn-buy" id="btn-buy" onclick="tradeSelected('buy')">Buy 1</button>
+          <button class="btn btn-buy" id="btn-buy-max" onclick="tradeSelected('buy_max')">Buy Max</button>
         </div>
       </div>
     </main>
