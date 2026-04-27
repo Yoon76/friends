@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Iron Curtain: Global Diplomacy</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --bg: #0a0a0a;
+            --crt-green: #00ff41;
+            --crt-amber: #ffb000;
+            --crt-red: #ff3e3e;
+            --border: #333;
+            --glow: 0 0 10px rgba(0, 255, 65, 0.3);
+        }
+
+        * { box-sizing: border-box; }
+        body {
+            background-color: var(--bg);
+            color: var(--crt-green);
+            font-family: 'Space Mono', monospace;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* CRT Scanline Overlay */
+        body::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        header {
+            border-bottom: 2px solid var(--crt-green);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--glow);
+            z-index: 3;
+        }
+
+        .nav-hub { color: var(--crt-amber); text-decoration: none; }
+        .nav-hub:hover { text-decoration: underline; }
+
+        main {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #map-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle, #1a1a1a 0%, #0a0a0a 100%);
+            overflow: auto;
+        }
+
+        #map {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            grid-template-rows: repeat(10, 1fr);
+            width: 700px;
+            height: 700px;
+            border: 2px solid var(--crt-green);
+            gap: 1px;
+            background-color: var(--border);
+        }
+
+        .territory {
+            background-color: #111;
+            border: 1px solid #222;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+
+        .territory:hover {
+            filter: brightness(1.5);
+            border-color: var(--crt-green);
+            z-index: 2;
+        }
+
+        .territory.selected {
+            border: 2px solid var(--crt-amber) !important;
+            z-index: 3;
+        }
+
+        .territory.plains { background-color: #1a2e1a; }
+        .territory.mountains { background-color: #2e1a1a; }
+        .territory.cities { background-color: #1a1a2e; }
+
+        .unit-count {
+            font-size: 12px;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        #sidebar {
+            width: 400px;
+            border-left: 2px solid var(--crt-green);
+            padding: 20px;
+            overflow-y: auto;
+            background-color: #0d0d0d;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        .section { margin-bottom: 20px; border: 1px solid var(--border); padding: 10px; }
+        .section-title { font-weight: bold; border-bottom: 1px solid var(--border); margin-bottom: 10px; color: var(--crt-amber); }
+
+        .btn {
+            background: transparent;
+            border: 1px solid var(--crt-green);
+            color: var(--crt-green);
+            padding: 8px;
+            width: 100%;
+            cursor: pointer;
+            margin-bottom: 5px;
+            font-family: inherit;
+            text-transform: uppercase;
+        }
+        .btn:hover { background: rgba(0, 255, 65, 0.1); }
+        .btn:disabled { border-color: #444; color: #444; cursor: not-allowed; }
+
+        #auth-wall {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .order-item {
+            font-size: 12px;
+            border-bottom: 1px dashed #333;
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #resolution-overlay {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: var(--bg);
+            border: 2px solid var(--crt-amber);
+            padding: 20px;
+            z-index: 200;
+            display: none;
+            width: 80%;
+            height: 80%;
+            overflow: auto;
+            box-shadow: 0 0 50px rgba(255, 176, 0, 0.2);
+        }
+
+        #resolution-log {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #ccc;
+        }
+
+        .log-entry { margin-bottom: 5px; border-left: 2px solid #444; padding-left: 10px; }
+        .log-combat { color: var(--crt-red); }
+        .log-move { color: var(--crt-amber); }
+        .log-build { color: var(--crt-green); }
+
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
+    </style>
+</head>
+<body>
+    <div id="auth-wall">
+        <h1 style="font-size: 3em; margin-bottom: 0;">THE IRON CURTAIN</h1>
+        <p style="color: var(--crt-amber); letter-spacing: 5px;">GLOBAL DIPLOMACY ENGINE v1.0</p>
+        <button class="btn" id="login-btn" style="width: 300px; margin-top: 50px;">ESTABLISH SECURE LINK</button>
+    </div>
+
+    <header>
+        <div>
+            <a href="../" class="nav-hub">&lt; TERMINAL_HUB</a>
+            <span style="margin-left: 20px; font-weight: bold;">OP_CODE: IRON_CURTAIN | DAY: <span id="day-display">0</span></span>
+        </div>
+        <div id="user-info">
+            <span id="user-name">...</span> | <span id="user-cash">$0</span>
+        </div>
+    </header>
+
+    <main>
+        <div id="map-container">
+            <div id="map"></div>
+        </div>
+        <div id="sidebar">
+            <div class="section">
+                <div class="section-title">NATION COMMAND</div>
+                <div id="nation-details">
+                    <div class="stat-row"><span>NATION:</span> <span id="stat-name">-</span></div>
+                    <div class="stat-row"><span>CASH:</span> <span id="stat-cash">-</span></div>
+                    <div class="stat-row"><span>TOTAL TERRITORIES:</span> <span id="stat-terrs">-</span></div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">INTEL: SECTOR <span id="selected-id">--</span></div>
+                <div id="territory-details">
+                    <p>Select a sector on the map grid.</p>
+                </div>
+                <div id="action-controls" style="display: none; margin-top: 10px;">
+                    <button class="btn" id="claim-btn" onclick="claimSector()" style="display: none; border-color: var(--crt-amber); color: var(--crt-amber);">CLAIM SECTOR (ESTABLISH HQ)</button>
+                    <button class="btn" onclick="queueOrder('TRAIN')">TRAIN TROOPS ($10K)</button>
+                    <button class="btn" onclick="queueOrder('TANK')">BUILD TANK ($50K)</button>
+                    <button class="btn" id="move-btn" onclick="startTargeting('MOVE')">RELOCATE UNITS</button>
+                    <button class="btn" id="attack-btn" onclick="startTargeting('ATTACK')">INITIATE OFFENSIVE</button>
+                </div>
+                <div id="targeting-notice" style="display: none; color: var(--crt-amber); margin-top: 10px; text-align: center; border: 1px dashed var(--crt-amber); padding: 5px;">
+                    SELECT TARGET SECTOR...
+                    <button class="btn" onclick="cancelTargeting()" style="font-size: 10px; margin-top: 5px;">CANCEL</button>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">COMMAND QUEUE</div>
+                <div id="orders-list"></div>
+            </div>
+        </div>
+    </main>
+
+    <div id="resolution-overlay">
+        <h2 style="color: var(--crt-amber); border-bottom: 1px solid var(--crt-amber);">DAILY RESOLUTION LOG</h2>
+        <div id="resolution-log"></div>
+        <button class="btn" onclick="document.getElementById('resolution-overlay').style.display='none'" style="margin-top: 20px;">ACKNOWLEDGE</button>
+    </div>
+
+    <script src="nations.js"></script>
+</body>
+</html>

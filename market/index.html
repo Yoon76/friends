@@ -44,6 +44,7 @@
     .nav-brand { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.02em; display: flex; align-items: center; gap: 1rem; }
     .nav-brand a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
     .nav-brand a:hover { color: var(--text); }
+    .nav-player { font-size: 0.9rem; font-weight: 600; color: var(--accent); }
     .nav-status { font-size: 0.8rem; color: var(--green); display: flex; align-items: center; gap: 0.5rem; }
     .status-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; box-shadow: 0 0 8px var(--green); }
 
@@ -103,15 +104,60 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 2rem 3rem;
+      padding: 1.5rem 3rem;
       overflow-y: auto;
       background: var(--bg);
     }
     
+    .view-tabs {
+      display: flex;
+      gap: 2rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: 0.8rem 0;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      position: relative;
+    }
+    .tab-btn.active { color: var(--text); }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+    }
+
     .main-header { margin-bottom: 2rem; }
     .main-title { font-size: 2.5rem; font-weight: 700; letter-spacing: -0.03em; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 1rem; }
     .main-price { font-family: 'Space Mono', monospace; font-size: 3rem; font-weight: 700; line-height: 1; }
     .main-change { font-size: 1.2rem; font-weight: 500; margin-top: 0.5rem; }
+
+    /* Shop Styling */
+    .shop-container { display: none; }
+    .shop-grid { display: flex; flex-direction: column; gap: 1rem; }
+    .shop-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .shop-item.owned { border-color: var(--green); background: rgba(0, 192, 118, 0.05); }
+    .shop-rank-name { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .shop-rank-desc { font-size: 0.85rem; color: var(--text-muted); }
+    .btn-owned { background: var(--green) !important; color: #fff; cursor: default; }
+    .btn-locked { background: var(--border) !important; color: var(--text-muted); cursor: not-allowed; }
 
     .chart-box {
       flex: 1;
@@ -141,7 +187,7 @@
 
     /* ── RIGHT: PORTFOLIO ── */
     .right-sidebar {
-      flex: 0 0 350px;
+      flex: 0 0 380px;
       border-left: 1px solid var(--border);
       display: flex;
       flex-direction: column;
@@ -154,21 +200,26 @@
     }
     .portfolio-label { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; }
     .portfolio-value { font-family: 'Space Mono', monospace; font-size: 2.5rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 0.5rem; }
+    .portfolio-meta { display: flex; justify-content: space-between; align-items: center; }
     .buying-power { font-size: 0.9rem; color: var(--text-muted); }
+    .current-rank-tag { font-size: 0.75rem; font-weight: 700; background: var(--accent); color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px; text-transform: uppercase; }
 
-    .leaderboard-box {
+    .leaderboards-container {
       flex: 1;
       display: flex;
       flex-direction: column;
       padding: 1.5rem;
       overflow-y: auto;
+      gap: 2rem;
     }
-    .leaderboard-box h3 { font-size: 1rem; font-weight: 600; color: var(--text-muted); margin-bottom: 1rem; }
+    .leaderboard-box h3 { font-size: 0.9rem; font-weight: 700; color: var(--text-muted); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.05em; }
     
     .lb-list { display: flex; flex-direction: column; gap: 0.5rem; }
-    .lb-row { display: flex; justify-content: space-between; padding: 0.8rem 1rem; background: var(--surface); border-radius: 8px; font-size: 0.9rem; font-weight: 500; }
+    .lb-row { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1rem; background: var(--surface); border-radius: 8px; font-size: 0.9rem; font-weight: 500; }
     .lb-row.top { border-left: 3px solid var(--accent); background: rgba(46, 138, 246, 0.1); }
-    .lb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+    .lb-info { display: flex; flex-direction: column; gap: 0.1rem; }
+    .lb-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; font-weight: 600; }
+    .lb-rank { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .lb-net { font-family: 'Space Mono', monospace; }
 
     /* ── AUTH WALL ── */
@@ -211,6 +262,7 @@
       <a href="../">← THE FILES</a>
       <span>Beef Market Exchange</span>
     </div>
+    <div class="nav-player" id="player-name-display">Loading...</div>
     <div class="nav-status">
       <div class="status-dot"></div>
       Global Sync Active
@@ -237,37 +289,54 @@
 
     <!-- CENTER: TRADING VIEW -->
     <main class="main-view">
-      <div class="main-header">
-        <h1 class="main-title" id="main-name">Global Overview</h1>
-        <div class="main-price" id="main-price">---</div>
-        <div class="main-change" id="main-change" style="color: var(--text-muted); font-size: 0.9rem;">Select an asset from the sidebar to trade.</div>
-      </div>
-      
-      <div class="chart-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
-          <select id="global-chart-type" onchange="changeChartType()" style="background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
-              <option value="line">Line Chart (Trend)</option>
-              <option value="bar">Bar Chart (Volume)</option>
-              <option value="radar">Radar Chart (Spread)</option>
-              <option value="doughnut">Doughnut (Current Cap)</option>
-          </select>
-          <button class="btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; background: var(--surface); color: var(--text); border: 1px solid var(--border);" onclick="toggleAllAssets()">Toggle All Lines</button>
+      <div class="view-tabs">
+        <button class="tab-btn active" onclick="switchTab('market')">Market</button>
+        <button class="tab-btn" onclick="switchTab('shop')">Shop</button>
       </div>
 
-      <div class="chart-box">
-        <canvas id="priceChart"></canvas>
-      </div>
-
-      <div class="trade-section" id="trade-section" style="display: none;">
-        <div class="trade-info">
-          <h3>Your Position</h3>
-          <p id="pos-shares">0 Shares Held</p>
-          <p id="pos-value" style="font-size: 1rem; color: var(--text-muted); margin-top: 0.2rem;">Value: $0.00</p>
+      <div id="market-view">
+        <div class="main-header">
+          <h1 class="main-title" id="main-name">Global Overview</h1>
+          <div class="main-price" id="main-price">---</div>
+          <div class="main-change" id="main-change" style="color: var(--text-muted); font-size: 0.9rem;">Select an asset from the sidebar to trade.</div>
         </div>
-        <div class="trade-actions">
-          <button class="btn btn-sell" id="btn-sell-all" onclick="tradeSelected('sell_all')">Sell All</button>
-          <button class="btn btn-sell" id="btn-sell" onclick="tradeSelected('sell')">Sell 1</button>
-          <button class="btn btn-buy" id="btn-buy" onclick="tradeSelected('buy')">Buy 1</button>
-          <button class="btn btn-buy" id="btn-buy-max" onclick="tradeSelected('buy_max')">Buy Max</button>
+        
+        <div class="chart-controls" style="margin-bottom: 1rem; display: flex; gap: 1rem; align-items: center;">
+            <select id="global-chart-type" onchange="changeChartType()" style="background: var(--surface); color: var(--text); border: 1px solid var(--border); padding: 0.6rem 1rem; border-radius: 8px; font-family: inherit; font-size: 0.9rem; outline: none; cursor: pointer;">
+                <option value="line">Line Chart (Trend)</option>
+                <option value="bar">Bar Chart (Volume)</option>
+                <option value="radar">Radar Chart (Spread)</option>
+                <option value="doughnut">Doughnut (Current Cap)</option>
+            </select>
+            <button class="btn" style="padding: 0.6rem 1.2rem; font-size: 0.9rem; background: var(--surface); color: var(--text); border: 1px solid var(--border);" onclick="toggleAllAssets()">Toggle All Lines</button>
+        </div>
+
+        <div class="chart-box">
+          <canvas id="priceChart"></canvas>
+        </div>
+
+        <div class="trade-section" id="trade-section" style="display: none;">
+          <div class="trade-info">
+            <h3>Your Position</h3>
+            <p id="pos-shares">0 Shares Held</p>
+            <p id="pos-value" style="font-size: 1rem; color: var(--text-muted); margin-top: 0.2rem;">Value: $0.00</p>
+          </div>
+          <div class="trade-actions">
+            <button class="btn btn-sell" id="btn-sell-all" onclick="tradeSelected('sell_all')">Sell All</button>
+            <button class="btn btn-sell" id="btn-sell" onclick="tradeSelected('sell')">Sell 1</button>
+            <button class="btn btn-buy" id="btn-buy" onclick="tradeSelected('buy')">Buy 1</button>
+            <button class="btn btn-buy" id="btn-buy-max" onclick="tradeSelected('buy_max')">Buy Max</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="shop-view" class="shop-container">
+        <div class="main-header">
+          <h1 class="main-title">Prestige Shop</h1>
+          <p style="color: var(--text-muted);">Acquire social standing and prove your dominance.</p>
+        </div>
+        <div class="shop-grid" id="shop-list">
+          <!-- JS fills -->
         </div>
       </div>
     </main>
@@ -277,13 +346,25 @@
       <div class="portfolio-box">
         <div class="portfolio-label">Total Portfolio Value</div>
         <div class="portfolio-value" id="net-worth-display">$0.00</div>
-        <div class="buying-power" id="cash-display">Buying Power: $0.00</div>
+        <div class="portfolio-meta">
+            <div class="buying-power" id="cash-display">Buying Power: $0.00</div>
+            <div class="current-rank-tag" id="rank-display">Peasant</div>
+        </div>
       </div>
 
-      <div class="leaderboard-box">
-        <h3>Global Forbes List</h3>
-        <div class="lb-list" id="market-leaderboard">
-          <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 2rem;">Synchronizing...</div>
+      <div class="leaderboards-container">
+        <div class="leaderboard-box">
+          <h3>Global Forbes List</h3>
+          <div class="lb-list" id="market-leaderboard">
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 1rem;">Synchronizing...</div>
+          </div>
+        </div>
+
+        <div class="leaderboard-box">
+          <h3>Weekly Top Performers</h3>
+          <div class="lb-list" id="weekly-leaderboard">
+            <div style="color: var(--text-muted); font-size: 0.85rem; text-align: center; margin-top: 1rem;">Computing...</div>
+          </div>
         </div>
       </div>
     </aside>
