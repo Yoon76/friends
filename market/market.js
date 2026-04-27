@@ -16,21 +16,10 @@ let currentRank = 'Peasant';
 
 let portfolio = {
     cash: 1000.00,
-    holdings: {},
-    rank: 'Peasant'
+    holdings: {}
 };
 
-const RANKS = [
-    { name: 'Peasant', price: 0 },
-    { name: 'Citizen', price: 5000 },
-    { name: 'Knight', price: 25000 },
-    { name: 'Lord', price: 100000 },
-    { name: 'King', price: 500000 },
-    { name: 'Emperor', price: 2500000 },
-    { name: 'Aura God', price: 10000000 }
-];
-
-// Core Assets (drastic changes, low frequency)
+// Core Assets (volatility increased, drastic changes)
 const STOCKS = [
     { ticker: 'AMR', name: 'Amr', price: 100, vol: 0.15, color: '#ff4757' },
     { ticker: 'AYRN', name: 'AyAron', price: 150, vol: 0.10, color: '#2ed573' },
@@ -62,7 +51,6 @@ let previousPrices = {};
 let priceHistory = {}; 
 const MAX_HISTORY = 30; // Shorter history for clearer visual impact
 let currentSelectedAsset = null;
-let currentTab = 'market';
 
 let priceChart = null;
 
@@ -100,15 +88,14 @@ function computeMarketData() {
             }
 
             // Base price algorithm (O(1) continuous state)
-            // Long wave (trend) - Reduced slightly (0.35 -> 0.25)
             const trend = Math.sin(T / 80 + s_idx) * 0.25; 
             const fast = Math.sin(T / 8 + s_idx * 5) * 0.15; // +/- 15%
             const noise = (seededRandom(seed1) * 2 - 1) * s.vol; // Volatility noise
             
             // Random drastic spikes (less frequent but more impact)
             let spike = 0;
-            if (seededRandom(seed2) > 0.98) { // 0.95 -> 0.98 (less frequent)
-                spike = (seededRandom(seed2 + 1) * 2 - 1) * 1.2; // 0.6 -> 1.2 (more impact)
+            if (seededRandom(seed2) > 0.98) {
+                spike = (seededRandom(seed2 + 1) * 2 - 1) * 1.2; 
             }
             
             const totalChange = trend + fast + noise + spike;
@@ -145,8 +132,7 @@ function triggerMarketUpdate() {
     priceHistory = data.hist;
     
     renderAssetList();
-    if (currentTab === 'market' && currentSelectedAsset) renderMainView();
-    if (currentTab === 'shop') renderShop();
+    if (currentSelectedAsset) renderMainView();
     renderPortfolio();
     updateChartData();
     
@@ -225,7 +211,7 @@ function renderAssetList() {
         const changePct = Math.abs(((current - prev)/prev)*100).toFixed(1);
         const sign = isUp ? '+' : '-';
         
-        const isActive = (currentTab === 'market' && currentSelectedAsset === s.ticker) ? 'active' : '';
+        const isActive = currentSelectedAsset === s.ticker ? 'active' : '';
 
         return `
             <div class="asset-item ${isActive}" onclick="selectAsset('${s.ticker}')">
@@ -242,34 +228,13 @@ function renderAssetList() {
     }).join('');
 }
 
-window.switchTab = function(tab) {
-    currentTab = tab;
-    
-    // UI toggle
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelector(`.tab-btn[onclick="switchTab('${tab}')"]`).classList.add('active');
-
-    if (tab === 'market') {
-        document.getElementById('market-view').style.display = 'block';
-        document.getElementById('shop-view').style.display = 'none';
-        renderMainView();
-    } else if (tab === 'shop') {
-        document.getElementById('market-view').style.display = 'none';
-        document.getElementById('shop-view').style.display = 'block';
-        renderShop();
-    }
-    renderAssetList();
-}
-
 window.selectAsset = function(ticker) {
-    if (currentTab !== 'market') switchTab('market');
     currentSelectedAsset = ticker;
     renderAssetList();
     renderMainView();
 }
 
 function renderMainView() {
-    if (!currentSelectedAsset) return;
     const asset = ALL_ASSETS.find(a => a.ticker === currentSelectedAsset);
     if (!asset) return;
 
@@ -297,59 +262,6 @@ function renderMainView() {
     document.getElementById('btn-buy-max').disabled = portfolio.cash < current;
     document.getElementById('btn-sell').disabled = qty <= 0;
     document.getElementById('btn-sell-all').disabled = qty <= 0;
-}
-
-function renderShop() {
-    const shopList = document.getElementById('shop-list');
-    if (!shopList) return;
-
-    const currentRankIdx = RANKS.findIndex(r => r.name === currentRank);
-
-    shopList.innerHTML = RANKS.map((r, i) => {
-        const isOwned = i <= currentRankIdx;
-        const canAfford = portfolio.cash >= r.price;
-        const isNext = i === currentRankIdx + 1;
-        
-        let btnText = 'Owned';
-        let btnClass = 'btn-owned';
-        let disabled = true;
-
-        if (!isOwned) {
-            if (isNext) {
-                btnText = `Buy for $${r.price.toLocaleString()}`;
-                btnClass = 'btn-buy';
-                disabled = !canAfford;
-            } else {
-                btnText = 'Locked';
-                btnClass = 'btn-locked';
-                disabled = true;
-            }
-        }
-
-        return `
-            <div class="shop-item ${isOwned ? 'owned' : ''}">
-                <div class="shop-info">
-                    <div class="shop-rank-name">${r.name}</div>
-                    <div class="shop-rank-desc">Rank level ${i}</div>
-                </div>
-                <button class="btn ${btnClass}" ${disabled ? 'disabled' : ''} onclick="buyRank('${r.name}', ${r.price})">
-                    ${btnText}
-                </button>
-            </div>
-        `;
-    }).join('');
-}
-
-window.buyRank = function(rankName, price) {
-    if (portfolio.cash >= price) {
-        portfolio.cash -= price;
-        portfolio.rank = rankName;
-        currentRank = rankName;
-        saveData();
-        renderShop();
-        renderPortfolio();
-        syncNetWorth();
-    }
 }
 
 window.tradeSelected = function(action) {
@@ -414,76 +326,42 @@ async function syncNetWorth() {
         netWorth += (portfolio.holdings[ticker] || 0) * marketPrices[ticker];
     });
 
-    // Simulate weekly earnings by taking a small fraction of net worth or just using net worth as a proxy
-    // In a real app, we'd track last week's NW. Here we'll just upsert rank.
     await _supabase.from('market_players').upsert({
-        id: currentUser.id, 
-        name: currentName, 
-        net_worth: netWorth, 
-        rank: currentRank,
-        weekly_earnings: netWorth * 0.1, // Placeholder for weekly earnings simulation
-        updated_at: new Date().toISOString()
+        id: currentUser.id, name: currentName, net_worth: netWorth, rank: currentRank, updated_at: new Date().toISOString()
     }, { onConflict: 'id' });
 }
 
 async function fetchLeaderboard() {
-    // Fetch Global Forbes
-    const { data: forbes, error: fErr } = await _supabase.from('market_players')
-        .select('name, net_worth, rank')
-        .order('net_worth', { ascending: false })
-        .limit(10);
-    
-    // Fetch Weekly Top (using weekly_earnings column)
-    const { data: weekly, error: wErr } = await _supabase.from('market_players')
-        .select('name, weekly_earnings, rank')
-        .order('weekly_earnings', { ascending: false })
-        .limit(10);
-
-    if (fErr || !forbes) return;
+    const { data, error } = await _supabase.from('market_players').select('name, net_worth, rank').order('net_worth', { ascending: false }).limit(15);
+    if (error || !data) return;
 
     const list = document.getElementById('market-leaderboard');
-    if (list) {
-        list.innerHTML = forbes.map((p, i) => `
-            <div class="lb-row ${i === 0 ? 'top' : ''}">
-                <div class="lb-info">
-                    <span class="lb-name">#${i + 1} ${sanitize(p.name)}</span>
-                    <span class="lb-rank">${p.rank || 'Peasant'}</span>
-                </div>
-                <span class="lb-net" style="color: var(--accent);">$${parseFloat(p.net_worth).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
-            </div>
-        `).join('');
-    }
+    if (!list) return;
 
-    const weeklyList = document.getElementById('weekly-leaderboard');
-    if (weeklyList && weekly) {
-        weeklyList.innerHTML = weekly.map((p, i) => `
-            <div class="lb-row ${i === 0 ? 'top' : ''}">
-                <div class="lb-info">
-                    <span class="lb-name">#${i + 1} ${sanitize(p.name)}</span>
-                    <span class="lb-rank">${p.rank || 'Peasant'}</span>
-                </div>
-                <span class="lb-net" style="color: var(--green);">+$${parseFloat(p.weekly_earnings || 0).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+    list.innerHTML = data.map((p, i) => `
+        <div class="lb-row ${i === 0 ? 'top' : ''}">
+            <div class="lb-info">
+                <span class="lb-name">#${i + 1} ${sanitize(p.name)}</span>
+                <span class="lb-rank">${p.rank || 'Peasant'}</span>
             </div>
-        `).join('');
-    }
+            <span class="lb-net" style="color: var(--green);">$${parseFloat(p.net_worth).toFixed(2)}</span>
+        </div>
+    `).join('');
 }
 
-// Global Charts Setup
 function initChart() {
     const ctx = document.getElementById('priceChart');
     if (!ctx) return;
 
-    // Display all assets by default as multiple lines
     const datasets = ALL_ASSETS.map(asset => ({
         label: asset.ticker,
         data: priceHistory[asset.ticker],
         borderColor: asset.color,
-        backgroundColor: asset.color + '44', // slightly transparent
+        backgroundColor: asset.color + '44', 
         borderWidth: 2,
         pointRadius: 0,
         fill: false,
-        tension: 0.1,
-        hidden: false // all visible by default
+        tension: 0.1
     }));
 
     priceChart = new Chart(ctx.getContext('2d'), {
@@ -495,100 +373,24 @@ function initChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            animation: { duration: 500 }, // smooth transitions for updates
+            animation: { duration: 0 },
             plugins: { 
-                legend: { 
-                    display: true, 
-                    position: 'bottom',
-                    labels: { color: '#888', boxWidth: 10, padding: 8 }
-                },
-                tooltip: {
-                    mode: 'index',
-                    intersect: false
-                }
+                legend: { display: true, position: 'bottom', labels: { color: '#888', boxWidth: 10, padding: 8 } },
+                tooltip: { mode: 'index', intersect: false }
             },
             scales: {
                 y: { grid: { color: '#222' }, ticks: { color: '#888', font: { family: 'Space Mono' } } },
                 x: { grid: { display: false } }
-            },
-            interaction: {
-                mode: 'nearest',
-                axis: 'x',
-                intersect: false
             }
         }
     });
 }
 
-window.changeChartType = function() {
-    if (!priceChart) return;
-    const type = document.getElementById('global-chart-type').value;
-    
-    if (type === 'doughnut') {
-        // Doughnut requires single points. We map the LATEST price.
-        const currentData = ALL_ASSETS.map(a => marketPrices[a.ticker]);
-        const bgColors = ALL_ASSETS.map(a => a.color);
-        
-        priceChart.config.type = 'doughnut';
-        priceChart.data = {
-            labels: ALL_ASSETS.map(a => a.ticker),
-            datasets: [{
-                data: currentData,
-                backgroundColor: bgColors,
-                borderWidth: 0
-            }]
-        };
-    } else {
-        // Reset to time series
-        const datasets = ALL_ASSETS.map(asset => ({
-            label: asset.ticker,
-            data: priceHistory[asset.ticker],
-            borderColor: asset.color,
-            backgroundColor: asset.color + '44',
-            borderWidth: type === 'radar' ? 1 : 2,
-            pointRadius: type === 'radar' ? 2 : 0,
-            fill: type === 'radar' || type === 'bar',
-            tension: 0.1,
-            hidden: false
-        }));
-
-        priceChart.config.type = type;
-        priceChart.data = {
-            labels: Array(MAX_HISTORY + 1).fill(''),
-            datasets: datasets
-        };
-    }
-    
-    priceChart.update();
-}
-
-window.toggleAllAssets = function() {
-    if (!priceChart) return;
-    
-    const type = document.getElementById('global-chart-type').value;
-    if (type === 'doughnut') return; // Cannot toggle lines on doughnut
-    
-    const isAnyVisible = priceChart.data.datasets.some(ds => !ds.hidden);
-    
-    priceChart.data.datasets.forEach(ds => {
-        ds.hidden = isAnyVisible; // Toggle all off if any are on
-    });
-    priceChart.update();
-}
-
 function updateChartData() {
     if (!priceChart) return;
-    
-    const type = document.getElementById('global-chart-type').value;
-    
-    if (type === 'doughnut') {
-        priceChart.data.datasets[0].data = ALL_ASSETS.map(a => marketPrices[a.ticker]);
-    } else {
-        ALL_ASSETS.forEach((asset, i) => {
-            priceChart.data.datasets[i].data = priceHistory[asset.ticker];
-        });
-    }
-    
+    ALL_ASSETS.forEach((asset, i) => {
+        priceChart.data.datasets[i].data = priceHistory[asset.ticker];
+    });
     priceChart.update();
 }
 
