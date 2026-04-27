@@ -60,16 +60,19 @@ async function loadGameState() {
     // Identify current user's nation
     currentNation = nData?.find(n => n.user_id === currentUser.id);
     if (!currentNation) {
-        const name = prompt("COMMANDER, IDENTIFY YOUR NATION:") || "New Republic";
+        const name = currentUser.user_metadata?.full_name || currentUser.email || "New Republic";
         const color = `hsl(${Math.random() * 360}, 70%, 50%)`;
-        const { data: newNation } = await _supabase.from('nations').insert({
+        const { data: newNation, error: insError } = await _supabase.from('nations').insert({
             user_id: currentUser.id,
             name: name,
             color: color
         }).select().single();
+        
         if (newNation) {
             currentNation = newNation;
             nations[newNation.id] = newNation;
+        } else {
+            console.error("Nation creation failed:", insError);
         }
     }
 
