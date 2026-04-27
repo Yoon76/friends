@@ -1,4 +1,4 @@
--- The Iron Curtain: Global Diplomacy - Database Setup
+-- FRONTLINE: Strategic Warfare - Database Setup
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Nations table
